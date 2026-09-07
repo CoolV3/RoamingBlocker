@@ -1,6 +1,5 @@
 packages:
-  - "apps/*"
-  - "packages/*"
+  - "."
 
 virtualStoreDir: D:\.pnpm\RoamingBlocker
 nodeLinker: hoisted
