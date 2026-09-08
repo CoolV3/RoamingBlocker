@@ -1,8 +1,10 @@
 import {View, Text, ScrollView, Pressable} from "react-native";
 import {Trash, Plus} from "lucide-react-native"
 import { Button } from 'react-native-paper';
+import { useRouter } from "expo-router";
 
 export default function RulesPage() {
+    const router = useRouter()
 
     return (
         <View className="items-center justify-start flex-1 flex-col p-2 pt-10">
@@ -37,7 +39,7 @@ export default function RulesPage() {
                         </View>
                     </ScrollView>
                     <View className="flex flex-row items-end justify-end w-full">
-                        <Button  mode="contained" className="flex flex-row items-center justify-center">Add countries</Button>
+                        <Button onPress={() => router.push("/addNewCountries")}  mode="contained" className="flex flex-row items-center justify-center">Add countries</Button>
                     </View>
                 </View>
                 <View className="w-full max-h-70 flex-1 justify-start items-center">
