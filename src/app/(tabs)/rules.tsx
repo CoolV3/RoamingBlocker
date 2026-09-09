@@ -1,6 +1,6 @@
 import {View, Text, ScrollView, Pressable} from "react-native";
 import {Trash, Plus} from "lucide-react-native"
-import { Button } from 'react-native-paper';
+import { Button, List } from 'react-native-paper';
 import { useRouter } from "expo-router";
 
 export default function RulesPage() {
@@ -13,30 +13,16 @@ export default function RulesPage() {
                 <View className="w-full max-h-70 flex-1 justify-start items-center">
                     <Text className="text-lg border-b-2">Allowed countries</Text>
                     <ScrollView className="w-full py-2" contentContainerClassName="gap-2 pb-10" showsVerticalScrollIndicator={false}>
-                        <View className="h-15 w-full flex-row items-center justify-between p-2 border-y-2">
-                            <Text className="text-3xl">Germany</Text>
-                            <Trash size={35} color={"#f44336"}/>
-                        </View>
-                        <View className="h-15 w-full flex-row items-center justify-between p-2 border-y-2">
-                            <Text className="text-3xl">Germany</Text>
-                            <Trash size={35} color={"#f44336"}/>
-                        </View>
-                        <View className="h-15 w-full flex-row items-center justify-between p-2 border-y-2">
-                            <Text className="text-3xl">Germany</Text>
-                            <Trash size={35} color={"#f44336"}/>
-                        </View>
-                        <View className="h-15 w-full flex-row items-center justify-between p-2 border-y-2">
-                            <Text className="text-3xl">Germany</Text>
-                            <Trash size={35} color={"#f44336"}/>
-                        </View>
-                        <View className="h-15 w-full flex-row items-center justify-between p-2 border-y-2">
-                            <Text className="text-3xl">Germany</Text>
-                            <Trash size={35} color={"#f44336"}/>
-                        </View>
-                        <View className="h-15 w-full flex-row items-center justify-between p-2 border-y-2">
-                            <Text className="text-3xl">Germany</Text>
-                            <Trash size={35} color={"#f44336"}/>
-                        </View>
+                        <List.Item className="flex flex-row" title={() => (<Text className="text-lg">Germany</Text>)} left={() => (<Text className="text-2xl">🇩🇪</Text>)} right={() => (<Trash size={30}/>)}/>
+                        <List.Item className="flex flex-row" title={() => (<Text className="text-lg">Germany</Text>)} left={() => (<Text className="text-2xl">🇩🇪</Text>)} right={() => (<Trash size={30}/>)}/>
+                        <List.Item className="flex flex-row" title={() => (<Text className="text-lg">Germany</Text>)} left={() => (<Text className="text-2xl">🇩🇪</Text>)} right={() => (<Trash size={30}/>)}/>
+                        <List.Item className="flex flex-row" title={() => (<Text className="text-lg">Germany</Text>)} left={() => (<Text className="text-2xl">🇩🇪</Text>)} right={() => (<Trash size={30}/>)}/>
+                        <List.Item className="flex flex-row" title={() => (<Text className="text-lg">Germany</Text>)} left={() => (<Text className="text-2xl">🇩🇪</Text>)} right={() => (<Trash size={30}/>)}/>
+                        <List.Item className="flex flex-row" title={() => (<Text className="text-lg">Germany</Text>)} left={() => (<Text className="text-2xl">🇩🇪</Text>)} right={() => (<Trash size={30}/>)}/>
+                        <List.Item className="flex flex-row" title={() => (<Text className="text-lg">Germany</Text>)} left={() => (<Text className="text-2xl">🇩🇪</Text>)} right={() => (<Trash size={30}/>)}/>
+                        <List.Item className="flex flex-row" title={() => (<Text className="text-lg">Germany</Text>)} left={() => (<Text className="text-2xl">🇩🇪</Text>)} right={() => (<Trash size={30}/>)}/>
+                        <List.Item className="flex flex-row" title={() => (<Text className="text-lg">Germany</Text>)} left={() => (<Text className="text-2xl">🇩🇪</Text>)} right={() => (<Trash size={30}/>)}/>
+                        <List.Item className="flex flex-row" title={() => (<Text className="text-lg">Germany</Text>)} left={() => (<Text className="text-2xl">🇩🇪</Text>)} right={() => (<Trash size={30}/>)}/>
                     </ScrollView>
                     <View className="flex flex-row items-end justify-end w-full">
                         <Button onPress={() => router.push("/addNewCountries")}  mode="contained" className="flex flex-row items-center justify-center">Add countries</Button>
@@ -45,30 +31,17 @@ export default function RulesPage() {
                 <View className="w-full max-h-70 flex-1 justify-start items-center">
                     <Text className="text-lg border-b-2">Blocked countries</Text>
                     <ScrollView className="w-full py-2" contentContainerClassName="gap-2 pb-10" showsVerticalScrollIndicator={false}>
-                        <View className="h-15 w-full flex-row items-center justify-between p-2 border-y-2">
-                            <Text className="text-3xl">Germany</Text>
-                            <Trash size={35} color={"#f44336"}/>
-                        </View>
-                        <View className="h-15 w-full flex-row items-center justify-between p-2 border-y-2">
-                            <Text className="text-3xl">Germany</Text>
-                            <Trash size={35} color={"#f44336"}/>
-                        </View>
-                        <View className="h-15 w-full flex-row items-center justify-between p-2 border-y-2">
-                            <Text className="text-3xl">Germany</Text>
-                            <Trash size={35} color={"#f44336"}/>
-                        </View>
-                        <View className="h-15 w-full flex-row items-center justify-between p-2 border-y-2">
-                            <Text className="text-3xl">Germany</Text>
-                            <Trash size={35} color={"#f44336"}/>
-                        </View>
-                        <View className="h-15 w-full flex-row items-center justify-between p-2 border-y-2">
-                            <Text className="text-3xl">Germany</Text>
-                            <Trash size={35} color={"#f44336"}/>
-                        </View>
-                        <View className="h-15 w-full flex-row items-center justify-between p-2 border-y-2">
-                            <Text className="text-3xl">Germany</Text>
-                            <Trash size={35} color={"#f44336"}/>
-                        </View>
+                        <List.Item title={() => (<Text className="text-lg">Germany</Text>)} left={() => (<Text className="text-2xl">🇩🇪</Text>)} right={() => (<Trash size={30}/>)}/>
+                        <List.Item className="flex flex-row" title={() => (<Text className="text-lg">Germany</Text>)} left={() => (<Text className="text-2xl">🇩🇪</Text>)} right={() => (<Trash size={30}/>)}/>
+                        <List.Item className="flex flex-row" title={() => (<Text className="text-lg">Germany</Text>)} left={() => (<Text className="text-2xl">🇩🇪</Text>)} right={() => (<Trash size={30}/>)}/>
+                        <List.Item className="flex flex-row" title={() => (<Text className="text-lg">Germany</Text>)} left={() => (<Text className="text-2xl">🇩🇪</Text>)} right={() => (<Trash size={30}/>)}/>
+                        <List.Item className="flex flex-row" title={() => (<Text className="text-lg">Germany</Text>)} left={() => (<Text className="text-2xl">🇩🇪</Text>)} right={() => (<Trash size={30}/>)}/>
+                        <List.Item className="flex flex-row" title={() => (<Text className="text-lg">Germany</Text>)} left={() => (<Text className="text-2xl">🇩🇪</Text>)} right={() => (<Trash size={30}/>)}/>
+                        <List.Item className="flex flex-row" title={() => (<Text className="text-lg">Germany</Text>)} left={() => (<Text className="text-2xl">🇩🇪</Text>)} right={() => (<Trash size={30}/>)}/>
+                        <List.Item className="flex flex-row" title={() => (<Text className="text-lg">Germany</Text>)} left={() => (<Text className="text-2xl">🇩🇪</Text>)} right={() => (<Trash size={30}/>)}/>
+                        <List.Item className="flex flex-row" title={() => (<Text className="text-lg">Germany</Text>)} left={() => (<Text className="text-2xl">🇩🇪</Text>)} right={() => (<Trash size={30}/>)}/>
+                        <List.Item className="flex flex-row" title={() => (<Text className="text-lg">Germany</Text>)} left={() => (<Text className="text-2xl">🇩🇪</Text>)} right={() => (<Trash size={30}/>)}/>
+                        <List.Item className="flex flex-row" title={() => (<Text className="text-lg">Germany</Text>)} left={() => (<Text className="text-2xl">🇩🇪</Text>)} right={() => (<Trash size={30}/>)}/>
                     </ScrollView>
                     <View className="flex flex-row items-end justify-end w-full">
                         <Button  mode="contained" className="flex flex-row items-center justify-center">Add countries</Button>
