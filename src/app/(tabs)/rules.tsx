@@ -25,7 +25,7 @@ export default function RulesPage() {
                         <List.Item className="flex flex-row" title={() => (<Text className="text-lg">Germany</Text>)} left={() => (<Text className="text-2xl">🇩🇪</Text>)} right={() => (<Trash size={30}/>)}/>
                     </ScrollView>
                     <View className="flex flex-row items-end justify-end w-full">
-                        <Button onPress={() => router.push("/addNewCountries")}  mode="contained" className="flex flex-row items-center justify-center">Add countries</Button>
+                        <Button onPress={() => router.push("/selectSelectionMode")}  mode="contained" className="flex flex-row items-center justify-center">Add countries</Button>
                     </View>
                 </View>
                 <View className="w-full max-h-70 flex-1 justify-start items-center">
@@ -44,7 +44,7 @@ export default function RulesPage() {
                         <List.Item className="flex flex-row" title={() => (<Text className="text-lg">Germany</Text>)} left={() => (<Text className="text-2xl">🇩🇪</Text>)} right={() => (<Trash size={30}/>)}/>
                     </ScrollView>
                     <View className="flex flex-row items-end justify-end w-full">
-                        <Button  mode="contained" className="flex flex-row items-center justify-center">Add countries</Button>
+                        <Button onPress={() => router.push("/selectSelectionMode")}  mode="contained" className="flex flex-row items-center justify-center">Add countries</Button>
                     </View>
                 </View>
             </View>
