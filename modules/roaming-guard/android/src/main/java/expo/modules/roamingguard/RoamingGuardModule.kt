@@ -24,8 +24,26 @@ class RoamingGuardModule : Module() {
                 countryStorage.getAllowedCountries()
             }
 
+        val getStandaloneCountriesCoroutine:
+            suspend () -> List<String> = {
+                countryStorage.getStandaloneCountries()
+        }
+
+        val getSelectedZoneIdsCoroutine:
+            suspend () -> List<String> = {
+                countryStorage.getSelectedZoneIds()
+        }
+
         AsyncFunction("getAllowedCountries") Coroutine
             getAllowedCountriesCoroutine
+
+        AsyncFunction("getStandaloneCountries") Coroutine
+            getStandaloneCountriesCoroutine
+
+
+        AsyncFunction("getSelectedZoneIds") Coroutine
+            getSelectedZoneIdsCoroutine
+
 
         AsyncFunction("addCountry") Coroutine { countryCode: String ->
             countryStorage.addCountry(countryCode)
@@ -37,6 +55,18 @@ class RoamingGuardModule : Module() {
 
         AsyncFunction("isCountryAllowed") Coroutine { countryCode: String ->
             countryStorage.isCountryAllowed(countryCode)
+        }
+
+        AsyncFunction("addZone") Coroutine { zoneId: String ->
+            countryStorage.addZone(zoneId)
+        }
+
+        AsyncFunction("removeZone") Coroutine { zoneId: String ->
+            countryStorage.removeZone(zoneId)
+        }
+
+        Function("getAvailableZones") {
+            countryStorage.getAvailableZones()
         }
     }
 }

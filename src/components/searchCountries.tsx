@@ -1,15 +1,16 @@
 import {View, Text, FlatList, Pressable} from "react-native";
 import {Searchbar, List, Portal, Dialog, Button} from 'react-native-paper';
-import {useMemo, useState} from "react";
+import {useCallback, useMemo, useState} from "react";
 import {useRouter} from "expo-router";
 import {getCountryDataList, getEmojiFlag, TCountryCode} from "countries-list";
+import RoamingGuard from "../../modules/roaming-guard/src/RoamingGuardModule";
 
 export default function SearchCountries() {
 
     const [search, setSearch] = useState("")
     const router = useRouter()
     const [showDialog, setShowDialog] = useState(false)
-    const [currentCountry, setCurrentCountry] = useState<{name: string, flag: string, nativeName: string, countryCode: string} | null>(null)
+    const [currentCountry, setCurrentCountry] = useState<{name: string, flag: string, nativeName: string, countryCode: TCountryCode} | null>(null)
 
     const countrylist = useMemo(() => {
         return getCountryDataList().map((country) => ({
@@ -18,6 +19,10 @@ export default function SearchCountries() {
             nativeName: country.native,
             flag: getEmojiFlag(country.iso2)
         }))
+    }, [])
+
+    const addCountry = useCallback(async (countryCode: TCountryCode) => {
+        await RoamingGuard.addCountry(countryCode)
     }, [])
 
     const filteredCountries = useMemo(() => {
@@ -43,16 +48,16 @@ export default function SearchCountries() {
 
     const addToAllowedList = () => {
         setShowDialog(false)
-    }
-    const addToBlockedList = () => {
-        setShowDialog(false)
+        if (currentCountry?.countryCode == null) {
+            return
+        }
+        void addCountry(currentCountry?.countryCode)
+        router.push("/(tabs)/rules")
+
     }
 
     return (
         <View>
-
-
-
             <View className="p-2">
                 <Searchbar value={search} onChangeText={(e) => setSearch(e)} className="" placeholder="Search for a country"/>
                 {search.trim().length > 0 && (
@@ -78,11 +83,10 @@ export default function SearchCountries() {
                             <Text className="text-5xl">{currentCountry?.flag}</Text>
                             <Text className="text-3xl">{currentCountry?.name}</Text>
                         </View>
-                        <Text className="text-lg">to allowed or blocked list?</Text>
+                        <Text className="text-lg">to allowed list?</Text>
                     </Dialog.Content>
                     <Dialog.Actions>
-                        <Button onPress={addToAllowedList}>Allowed List</Button>
-                        <Button onPress={addToBlockedList}>Blocked List</Button>
+                        <Button onPress={addToAllowedList}>Add</Button>
                     </Dialog.Actions>
                 </Dialog>
             </Portal>
