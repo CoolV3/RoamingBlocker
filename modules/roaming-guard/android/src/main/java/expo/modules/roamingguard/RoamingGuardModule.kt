@@ -16,6 +16,7 @@ class RoamingGuardModule : Module() {
         }
 
     override fun definition() = ModuleDefinition {
+
         Name("RoamingGuard")
 
         val getAllowedCountriesCoroutine:

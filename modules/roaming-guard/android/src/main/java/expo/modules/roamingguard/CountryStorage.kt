@@ -30,7 +30,7 @@ class CountryStorage(private val context: Context) {
                 preferences[ALLOWED_COUNTRIES_KEY]
                     ?.toMutableSet()
                     ?: mutableSetOf()
-            currentCountries.add(storageCountryCode)
+            currentCountries.add(storageCountryCode.trim().uppercase())
 
             preferences[ALLOWED_COUNTRIES_KEY] = currentCountries
         }
@@ -41,7 +41,7 @@ class CountryStorage(private val context: Context) {
             val countries = preferences[ALLOWED_COUNTRIES_KEY]
                 ?.toMutableSet()
                 ?: mutableSetOf()
-            countries.remove(countryCode.uppercase())
+            countries.remove(countryCode.trim().uppercase())
             preferences[ALLOWED_COUNTRIES_KEY] = countries
         }
     }
@@ -50,7 +50,7 @@ class CountryStorage(private val context: Context) {
         val preferences = context.countryDataStorage.data.first()
         val countries = preferences[ALLOWED_COUNTRIES_KEY] ?: emptySet()
 
-        return countries.contains(countryCode.uppercase())
+        return countries.contains(countryCode.trim().uppercase())
     }
 }
 

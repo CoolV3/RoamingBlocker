@@ -5,7 +5,7 @@ import { useRouter } from "expo-router";
 
 import RoamingGuard from "../../../modules/roaming-guard/src/RoamingGuardModule";
 
-import {useCallback, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {getCountryData, getEmojiFlag, TCountryCode} from "countries-list";
 
 type CountryCode = {
@@ -52,8 +52,19 @@ export default function RulesPage() {
     }, [])
 
     const testAddCountry = useCallback(async () => {
-        await RoamingGuard.addCountry("DE")
+
+        await RoamingGuard.addCountry("BE")
+        await loadAllowedCountries();
     }, [])
+    const deleteCountry = useCallback(async (countryCode: TCountryCode) => {
+
+        await RoamingGuard.removeCountry(countryCode)
+        await loadAllowedCountries();
+    }, [])
+
+    useEffect(() => {
+        void loadAllowedCountries()
+    }, [loadAllowedCountries])
 
     return (
         <View className="items-center justify-start flex-1 flex-col p-2 pt-10">
@@ -65,7 +76,7 @@ export default function RulesPage() {
                         {allowedCountries.length != 0 ? (
                             <View>
                                 {allowedCountries.map((country, index) => (
-                                    <List.Item key={index} className="flex flex-row" title={() => (<Text className="text-lg">{country.name}</Text>)} left={() => (<Text className="text-2xl">{country.flag}</Text>)} right={() => (<Trash size={30}/>)}/>
+                                    <List.Item key={index} className="flex flex-row" title={() => (<Text className="text-lg">{country.name}</Text>)} left={() => (<Text className="text-2xl">{country.flag}</Text>)} right={() => (<Trash size={30} onPress={() => deleteCountry(country.countryCode)}/>)}/>
                                 ))}
                             </View>
                         ) : (
@@ -92,7 +103,7 @@ export default function RulesPage() {
                         <List.Item className="flex flex-row" title={() => (<Text className="text-lg">Germany</Text>)} left={() => (<Text className="text-2xl">🇩🇪</Text>)} right={() => (<Trash size={30}/>)}/>
                     </ScrollView>
                     <View className="flex flex-row items-end justify-end w-full">
-                        <Button onPress={() => testAddCountry}  mode="contained" className="flex flex-row items-center justify-center">Add countries</Button>
+                        <Button onPress={testAddCountry}  mode="contained" className="flex flex-row items-center justify-center">Add countries</Button>
                     </View>
                 </View>
             </View>
