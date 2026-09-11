@@ -65,7 +65,7 @@ export default function SearchZones() {
                     <View>
                         {(filteredZones?.length ?? 0 ) > 0 ? (
                             <FlatList data={filteredZones ?? []} renderItem={({item}) => (
-                                <List.Item onPress={() => showZoneChoice(item)}  title={item.name} left={() => (<RadioTower size={30}/>)}/>
+                                <List.Item description={`${item.countries.length} countries`} onPress={() => showZoneChoice(item)}  title={item.name} left={() => (<RadioTower size={30}/>)}/>
                             )} />
 
                         ): (

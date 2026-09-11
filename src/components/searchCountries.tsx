@@ -64,7 +64,7 @@ export default function SearchCountries() {
                     <View>
                         {(filteredCountries?.length ?? 0 ) > 0 ? (
                             <FlatList data={filteredCountries ?? []} renderItem={({item}) => (
-                                <List.Item onPress={() => showCountryChoice(item.code, item.name, item.flag, item.nativeName)}  title={item.name} left={() => (<Text className="text-2xl">{item.flag}</Text>)}/>
+                                <List.Item  onPress={() => showCountryChoice(item.code, item.name, item.flag, item.nativeName)}  title={item.name} left={() => (<Text className="text-2xl">{item.flag}</Text>)}/>
                             )} />
 
                         ): (
