@@ -22,7 +22,7 @@ export default function AddNewCountriesPage() {
 
                     <Card.Actions>
                         <Button onPress={() => router.push("/addByCountry")}>Add countries</Button>
-                        <Button>Add zones</Button>
+                        <Button onPress={() => router.push("/addByZone")}>Add zones</Button>
                     </Card.Actions>
                 </Card>
             </View>

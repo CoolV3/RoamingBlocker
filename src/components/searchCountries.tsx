@@ -39,7 +39,7 @@ export default function SearchCountries() {
 
     }, [search, countrylist])
 
-    const showCountryChoice = (countryCode: string, countryName: string, icon: string, nativeName: string) => {
+    const showCountryChoice = (countryCode: TCountryCode, countryName: string, icon: string, nativeName: string) => {
 
         setCurrentCountry({name: countryName, nativeName: nativeName, countryCode: countryCode, flag: icon})
         setShowDialog(true)
@@ -81,7 +81,7 @@ export default function SearchCountries() {
                         <Text className="text-lg">Would you like to add</Text>
                         <View className="flex items-center border-2 p-4 rounded-2xl">
                             <Text className="text-5xl">{currentCountry?.flag}</Text>
-                            <Text className="text-3xl">{currentCountry?.name}</Text>
+                            <Text className="text-3xl text-center">{currentCountry?.name}</Text>
                         </View>
                         <Text className="text-lg">to allowed list?</Text>
                     </Dialog.Content>
