@@ -17,7 +17,7 @@ export default function SearchZones() {
     const [search, setSearch] = useState("")
     const [showDialog, setShowDialog] = useState(false)
     const [currentZone, setCurrentZone] = useState<RoamingZone | null>(null)
-    const [expanded, setExpanded] = useState(true)
+    const [expanded, setExpanded] = useState(false)
     const zoneList = useMemo<RoamingZone[]>(() => {
         return RoamingGuard.getAvailableZones();
     }, []);

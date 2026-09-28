@@ -1,12 +1,14 @@
 import {View, Text, ScrollView, Pressable} from "react-native";
 import {Trash, RadioTower, ChevronUp, ChevronDown} from "lucide-react-native"
-import { Button, List } from 'react-native-paper';
+import {Button, Dialog, List, Portal} from 'react-native-paper';
 import { useRouter } from "expo-router";
 
 import RoamingGuard, {type RoamingZone} from "../../../modules/roaming-guard/src/RoamingGuardModule";
 
 import {useCallback, useEffect, useState} from "react";
 import {getCountryData, getEmojiFlag, TCountryCode} from "countries-list";
+import {currencies} from "countries-list/currencies";
+import {red500} from "react-native-paper/src/styles/themes/v2/colors";
 
 type CountryCode = {
     name: string,
@@ -21,6 +23,9 @@ export default function RulesPage() {
     const [allowedCountries, setAllowedCountries] = useState<CountryCode[]>([])
     const [zones, setZones] = useState<RoamingZone[]>([])
     const [expandedZones, setExpandedZones] = useState<Set<string>>(() => new Set())
+    const [showDeleteWarning, setShowDeleteWarning] = useState(false)
+    const [showDeleteZoneWarning, setShowDeleteZoneWarning] = useState(false)
+    const [deleteId, setDeleteId] = useState("")
 
     const toggleZone = (zoneId: string) => {
         setExpandedZones((current) => {
@@ -75,14 +80,23 @@ export default function RulesPage() {
         }
     }, []);
 
-    const deleteCountry = useCallback(async (countryCode: TCountryCode) => {
+    const deleteCountry =  (countryCode: TCountryCode) => {
+        setDeleteId(countryCode)
+        setShowDeleteWarning(true)
+    }
+    const deleteZone =  (countryCode: TCountryCode) => {
+        setDeleteId(countryCode)
+        setShowDeleteZoneWarning(true)
+    }
 
+    const deleteCountryFinally = useCallback(async (countryCode: string) => {
+        setShowDeleteWarning(false)
         await RoamingGuard.removeCountry(countryCode)
         await loadAllowedCountries();
     }, [])
 
-    const deleteZone = useCallback(async (zoneId: string) => {
-
+    const deleteZoneFinally = useCallback(async (zoneId: string) => {
+        setShowDeleteZoneWarning(false)
         await RoamingGuard.removeZone(zoneId)
         await loadAllowedCountries();
     }, [])
@@ -135,6 +149,38 @@ export default function RulesPage() {
                     <View className="flex flex-row items-end justify-end w-full pb-20">
                         <Button onPress={() => router.push("/selectSelectionMode")}  mode="contained" className="flex flex-row items-center justify-center">Add countries</Button>
                     </View>
+                    {showDeleteWarning && (
+                        <View>
+                            <Portal>
+                                <Dialog visible={showDeleteWarning} onDismiss={() => setShowDeleteWarning(false)}>
+                                    <Dialog.Title>Delete Warning</Dialog.Title>
+                                    <Dialog.Content>
+                                        <Text>Are you sure that you want to delete this Country?</Text>
+                                    </Dialog.Content>
+                                    <Dialog.Actions>
+                                        <Button mode="contained" className="px-2" onPress={() => setShowDeleteWarning(false)}>Back</Button>
+                                        <Button onPress={() => deleteCountryFinally(deleteId)} textColor="#f44336" >Delete</Button>
+                                    </Dialog.Actions>
+                                </Dialog>
+                            </Portal>
+                        </View>
+                    )}
+                    {showDeleteZoneWarning && (
+                        <View>
+                            <Portal>
+                                <Dialog visible={showDeleteZoneWarning} onDismiss={() => setShowDeleteZoneWarning(false)}>
+                                    <Dialog.Title>Delete Warning</Dialog.Title>
+                                    <Dialog.Content>
+                                        <Text>Are you sure that you want to delete this Zone?</Text>
+                                    </Dialog.Content>
+                                    <Dialog.Actions>
+                                        <Button mode="contained" className="px-2" onPress={() => setShowDeleteZoneWarning(false)}>Back</Button>
+                                        <Button onPress={() => deleteZoneFinally(deleteId)} textColor="#f44336">Delete</Button>
+                                    </Dialog.Actions>
+                                </Dialog>
+                            </Portal>
+                        </View>
+                    )}
                 </View>
             </View>
         </View>
