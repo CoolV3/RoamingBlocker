@@ -11,7 +11,7 @@ object RoamingZones {
 
     private val zones = listOf(RoamingZone(
             id = "eu-roaming-zone-1",
-            name = "EU Roaming Zone 1",
+            name = "EU Free Roaming Zone",
             countries = setOf("AT","BE","BG","HR","CY","CZ","DE","DK","EE","ES","FI","FR","GR","HU","IE","IT","LT","LU","LV","MT","NL","PL","PT","RO","SE","SI","SK")
         )
     )

@@ -1,10 +1,10 @@
-import {View, Text, FlatList, Pressable} from "react-native";
+import {View, Text, FlatList, Pressable, ScrollView} from "react-native";
 import {Searchbar, List, Portal, Dialog, Button} from 'react-native-paper';
 import {useCallback, useMemo, useState} from "react";
 import {useRouter} from "expo-router";
 import {RadioTower} from "lucide-react-native";
 
-import {getCountryDataList, getEmojiFlag, TCountryCode} from "countries-list";
+import {getCountryData, getCountryDataList, getEmojiFlag, TCountryCode} from "countries-list";
 
 import RoamingGuard from "../../modules/roaming-guard/src/RoamingGuardModule";
 import { type RoamingZone } from "../../modules/roaming-guard/src/RoamingGuardModule";
@@ -17,6 +17,7 @@ export default function SearchZones() {
     const [search, setSearch] = useState("")
     const [showDialog, setShowDialog] = useState(false)
     const [currentZone, setCurrentZone] = useState<RoamingZone | null>(null)
+    const [expanded, setExpanded] = useState(true)
     const zoneList = useMemo<RoamingZone[]>(() => {
         return RoamingGuard.getAvailableZones();
     }, []);
@@ -85,6 +86,22 @@ export default function SearchZones() {
                             <Text className="text-3xl text-center">{currentZone?.name}</Text>
                         </View>
                         <Text className="text-lg">to allowed list?</Text>
+                        <Button onPress={() => setExpanded(!expanded)}>{expanded ? "Show less" : "Show countries"}</Button>
+                        <ScrollView className="w-full max-h-50" contentContainerClassName="gap-2 " showsVerticalScrollIndicator={false}>
+                            {expanded && (
+                                <View>
+                                    {currentZone?.countries.map((code) => {
+                                        const countryCode = code.toUpperCase() as TCountryCode
+                                        const countryData = getCountryData(countryCode)
+                                        const emoji = getEmojiFlag(countryCode)
+
+                                        return (
+                                            <List.Item key={code} className="flex flex-row" title={() => (<Text className="text-lg">{countryData.name}</Text>)} left={() => (<Text className="text-2xl">{emoji}</Text>)}/>
+                                        )
+                                    })}
+                                </View>
+                            )}
+                        </ScrollView>
                     </Dialog.Content>
                     <Dialog.Actions>
                         <Button onPress={addToAllowedList}>Add</Button>

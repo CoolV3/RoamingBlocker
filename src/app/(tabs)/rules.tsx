@@ -111,7 +111,7 @@ export default function RulesPage() {
                                             const emoji = getEmojiFlag(countryCode)
 
                                             return (
-                                                    <List.Item key={code} className="flex flex-row pl-10" title={() => (<Text className="text-lg">{countryData.name}</Text>)} left={() => (<Text className="text-2xl">{emoji}</Text>)}/>
+                                                <List.Item key={code} className="flex flex-row pl-10" title={() => (<Text className="text-lg">{countryData.name}</Text>)} left={() => (<Text className="text-2xl">{emoji}</Text>)}/>
                                             )
                                         })}
                                     </View>
