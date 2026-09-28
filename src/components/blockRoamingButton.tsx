@@ -2,19 +2,45 @@ import {Pressable, View, Animated, Easing, Text} from "react-native";
 import Svg, { Path } from "react-native-svg";
 import {useEffect, useRef, useState} from "react";
 import {Shield, ShieldOff} from "lucide-react-native"
+import RoamingGuard from "../../modules/roaming-guard/src/RoamingGuardModule";
 
 export default function BlockRoamingButton({title, onPress}: {title: string, onPress: () => void}) {
     const [active, setActive] = useState(false)
     const rotationRef = useRef(new Animated.Value(0)).current
     const animationRef = useRef<Animated.CompositeAnimation | null>(null);
     const animationVersion = useRef(0)
+    const [isChanging, setIsChanging] = useState(false);
 
-    const setActiveAction = () => {
-        setActive((current) => (!current))
+    const setActiveAction = async () => {
+        if (isChanging) return;
+
+        const nextActive = !active;
+        setIsChanging(true);
+
+        try {
+            if (nextActive) {
+                await RoamingGuard.enableCountryWatching();
+            } else {
+                await RoamingGuard.disableCountryWatching();
+            }
+
+            setActive(nextActive);
+            onPress?.();
+        } catch (error) {
+            console.error("Failed to change RoamingGuard state:", error);
+        } finally {
+            setIsChanging(false);
+        }
+    };
 
 
-        onPress()
-    }
+    useEffect(() => {
+        const loadState = async () => {
+            const isWatching = await RoamingGuard.isCountryWatching()
+            setActive(isWatching)
+        }
+        void loadState()
+    }, []);
 
     useEffect(() => {
         animationVersion.current += 1;
