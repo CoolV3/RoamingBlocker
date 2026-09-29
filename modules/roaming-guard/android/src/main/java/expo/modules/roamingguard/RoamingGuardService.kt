@@ -9,6 +9,7 @@ import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import android.content.pm.ServiceInfo
 import androidx.core.app.ServiceCompat
+import android.app.PendingIntent
 
 class RoamingGuardService : Service() {
 
@@ -22,7 +23,16 @@ class RoamingGuardService : Service() {
         const val NOTIFICATION_CHANNEL_ID =
             "roaming_guard_protection"
 
+        const val CountryChangeAlert_NOTIFICATION_CHANNEL_ID =
+            "roaming_guard_country_alert"
+
         const val NOTIFICATION_ID = 1001
+
+        const val CountryChangeAlert_NOTIFICATION_ID = 1065
+
+        private const val OPEN_BLOCKED_SCREEN_REQUEST_CODE = 1065
+        const val EXTRA_OPEN_BLOCKED_SCREEN = "expo.modules.roamingguard.extra.OPEN_BLOCKED_SCREEN"
+        const val EXTRA_BLOCKED_COUNTRY_CODE = "expo.modules.roamingguard.extra.BLOCKED_COUNTRY_CODE"
 
         @Volatile
         var isRunning = false
@@ -59,9 +69,6 @@ class RoamingGuardService : Service() {
             }
         }
 
-        /*
-         * Android may recreate the service after process termination.
-         */
         return START_STICKY
     }
 
@@ -93,33 +100,31 @@ class RoamingGuardService : Service() {
     private fun handleCountryResult(
         result: CountryChangeResult
     ) {
-        val message = if (result.isAllowed) {
-            "Connected country: ${result.currentCountryCode}"
-        } else {
-            "Warning: ${result.currentCountryCode} is not allowed"
+
+        val notificationManager = getSystemService(NotificationManager::class.java)
+
+        if (result.isAllowed) {
+            notificationManager.notify(
+                NOTIFICATION_ID,
+                createNotification(
+                    title = "RoamingGuard is active",
+                    message = "Connected country: ${result.currentCountryCode}"
+                )
+            )
+
+            return
         }
 
-        val notificationManager =
-            getSystemService(NotificationManager::class.java)
+
 
         notificationManager.notify(
-            NOTIFICATION_ID,
-            createNotification(
-                title = if (result.isAllowed) {
-                    "RoamingGuard is active"
-                } else {
-                    "RoamingGuard warning"
-                },
-                message = message
+            CountryChangeAlert_NOTIFICATION_ID,
+            createBlockedAlertNotification(
+                countryCode = result.currentCountryCode
             )
         )
 
-        /*
-         * Add your roaming blocking or warning behavior here.
-         *
-         * Do not depend on React Native receiving an event because
-         * JavaScript may not be running while the app is closed.
-         */
+
     }
 
     private fun createNotificationChannel() {
@@ -132,10 +137,26 @@ class RoamingGuardService : Service() {
                 "Shows when RoamingGuard country monitoring is active"
         }
 
+        val countryChangeAlertChannel = NotificationChannel(
+                    CountryChangeAlert_NOTIFICATION_CHANNEL_ID,
+                    "CountryChange Detected",
+                    NotificationManager.IMPORTANCE_HIGH
+                ).apply {
+                    description =
+                        "Click here to see details."
+                    enableVibration(true)
+                    setShowBadge(true)
+                }
+
         val notificationManager =
             getSystemService(NotificationManager::class.java)
 
-        notificationManager.createNotificationChannel(channel)
+        notificationManager.createNotificationChannels(
+            listOf(
+                channel,
+                countryChangeAlertChannel
+            )
+        )
     }
 
     private fun createNotification(
@@ -153,6 +174,54 @@ class RoamingGuardService : Service() {
             .setOnlyAlertOnce(true)
             .setCategory(NotificationCompat.CATEGORY_SERVICE)
             .build()
+    }
+
+
+
+    private fun createBlockedAlertNotification(countryCode: String): Notification {
+
+        val contentIntent = createOpenBlockedScreenPendingIntent(countryCode = countryCode)
+
+        return NotificationCompat.Builder(this, CountryChangeAlert_NOTIFICATION_CHANNEL_ID)
+        .setSmallIcon(android.R.drawable.stat_sys_warning)
+        .setContentTitle("Mobile data blocked")
+        .setContentText("RoamingGuard detected a disallowed network in $countryCode.")
+        .setStyle(
+        NotificationCompat.BigTextStyle()
+        .bigText("RoamingGuard detected a disallowed mobile network in $countryCode. Tap to view more information.")
+        )
+        .setContentIntent(contentIntent)
+        .setAutoCancel(true)
+        .setOngoing(false)
+        .setOnlyAlertOnce(false)
+        .setCategory(NotificationCompat.CATEGORY_ERROR)
+        .setPriority(NotificationCompat.PRIORITY_HIGH)
+        .setDefaults(NotificationCompat.DEFAULT_ALL)
+        .build()
+    }
+
+    private fun createOpenBlockedScreenPendingIntent(countryCode: String): PendingIntent? {
+
+        val launchIntent = packageManager.getLaunchIntentForPackage(packageName) ?: return null
+
+        launchIntent.apply {
+        addFlags(
+            Intent.FLAG_ACTIVITY_NEW_TASK or
+            Intent.FLAG_ACTIVITY_CLEAR_TOP or
+            Intent.FLAG_ACTIVITY_SINGLE_TOP
+        )
+
+        putExtra(EXTRA_OPEN_BLOCKED_SCREEN,true)
+        putExtra(EXTRA_BLOCKED_COUNTRY_CODE,countryCode)
+
+        }
+        return PendingIntent.getActivity(
+            this,
+            OPEN_BLOCKED_SCREEN_REQUEST_CODE,
+            launchIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or
+            PendingIntent.FLAG_IMMUTABLE
+        )
     }
 
     override fun onDestroy() {
