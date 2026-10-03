@@ -5,9 +5,11 @@ import {Shield, ShieldOff} from "lucide-react-native"
 import RoamingGuard from "../../modules/roaming-guard/src/RoamingGuardModule";
 import { Host, Shape, Row } from '@expo/ui/jetpack-compose';
 import {size} from "@expo/ui/jetpack-compose/modifiers";
+import { Button, Dialog, Portal} from 'react-native-paper';
 
 export default function BlockRoamingButton({title, onPress}: {title: string, onPress: () => void}) {
     const [active, setActive] = useState(false)
+    const [showVPNDenied ,setShowVPNDenied] = useState(false)
     const rotationRef = useRef(new Animated.Value(0)).current
     const animationRef = useRef<Animated.CompositeAnimation | null>(null);
     const animationVersion = useRef(0)
@@ -21,9 +23,24 @@ export default function BlockRoamingButton({title, onPress}: {title: string, onP
 
         try {
             if (nextActive) {
-                await RoamingGuard.enableCountryWatching();
+                try {
+                    await RoamingGuard.enableCountryWatching();
+                } catch (e: any) {
+                    if (e?.code == "ERR_VPN_PERMISSION_DENIED") {
+                        setShowVPNDenied(true)
+                        return
+                    }
+                }
+
             } else {
-                await RoamingGuard.disableCountryWatching();
+                try {
+                    await RoamingGuard.disableCountryWatching();
+                } catch (e: any) {
+                    if (e?.code == "ERR_VPN_PERMISSION_DENIED") {
+                        setShowVPNDenied(true)
+                        return
+                    }
+                }
             }
 
             setActive(nextActive);
@@ -131,6 +148,18 @@ export default function BlockRoamingButton({title, onPress}: {title: string, onP
                 )}
             </Pressable>
             <Text className="text-center text-lg">{active ? "Roaming Guard is active." : "Roaming Guard is inactive"}</Text>
+
+            <Portal>
+                <Dialog visible={showVPNDenied} onDismiss={() => setShowVPNDenied(false)}>
+                    <Dialog.Title>RoamingGuard needs VPN Access</Dialog.Title>
+                    <Dialog.Content>
+                        <Text>You need to allow RoamingGuard to create a VPN so it can block your network traffic when your phone connects with a country that is not on your allowed list.</Text>
+                    </Dialog.Content>
+                    <Dialog.Actions>
+                        <Button onPress={() => setShowVPNDenied(false)}>Got it!</Button>
+                    </Dialog.Actions>
+                </Dialog>
+            </Portal>
         </View>
     )
 }

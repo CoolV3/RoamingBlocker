@@ -5,9 +5,11 @@ import BuyEsimButton from "@/components/buyEsimButton";
 import type { ModalBottomSheetRef } from '@expo/ui/jetpack-compose';
 import {Button} from "react-native-paper";
 import {useRef, useState} from "react";
+import RoamingGuard from "../../modules/roaming-guard/src/RoamingGuardModule";
+import {useRouter} from "expo-router";
 
 export default function InternetBlockedAccessScreen() {
-
+    const router = useRouter()
     const { countryCode } = useLocalSearchParams<{countryCode: TCountryCode}>()
 
     const currentCountryData = getCountryData(countryCode)
@@ -20,6 +22,18 @@ export default function InternetBlockedAccessScreen() {
         await sheetRef.current?.hide();
         setVisible(false);
     };
+
+    const disableProtection = async () => {
+        await RoamingGuard.disableCountryWatching()
+        router.replace("/")
+    }
+
+    const whitelistCurrentCountry = async () => {
+        await RoamingGuard.disableCountryWatching()
+        await RoamingGuard.addCountry(countryCode)
+        await RoamingGuard.enableCountryWatching()
+        router.replace("/rules")
+    }
 
     return(
         <View className="items-center justify-between flex-1 flex-col p-2 pt-10">
@@ -37,7 +51,8 @@ export default function InternetBlockedAccessScreen() {
             </View>
             <View className="flex gap-3 pb-10">
                 <BuyEsimButton/>
-                    <Button mode="outlined">Whitelist country</Button>
+                <Button mode="outlined" onPress={whitelistCurrentCountry}>Whitelist country</Button>
+                <Button mode="outlined" onPress={disableProtection}>Disable Protection</Button>
             </View>
 
 

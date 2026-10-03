@@ -25,6 +25,7 @@ declare class RoamingGuardModule extends NativeModule<{}> {
   isCountryWatching(): Promise<boolean>;
 
   isCountryWatchingServiceRunning(): boolean;
+  isInternetBlocked(): boolean;
 }
 
 export default requireNativeModule<RoamingGuardModule>(

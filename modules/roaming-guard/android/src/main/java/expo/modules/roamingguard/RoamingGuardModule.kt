@@ -261,5 +261,10 @@ class RoamingGuardModule : Module() {
         Function("getAvailableZones") {
             countryStorage.getAvailableZones()
         }
+
+        Function("isInternetBlocked") {
+            RoamingGuardService.isBlocking
+        }
+
     }
 }
