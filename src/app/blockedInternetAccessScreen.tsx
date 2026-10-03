@@ -1,8 +1,10 @@
 import {View, Text} from "react-native";
 import {useLocalSearchParams} from "expo-router";
 import {getCountryData, getCountryDataList, getEmojiFlag, TCountryCode} from "countries-list";
-import {Button} from "react-native-paper";
 import BuyEsimButton from "@/components/buyEsimButton";
+import type { ModalBottomSheetRef } from '@expo/ui/jetpack-compose';
+import {Button} from "react-native-paper";
+import {useRef, useState} from "react";
 
 export default function InternetBlockedAccessScreen() {
 
@@ -10,6 +12,14 @@ export default function InternetBlockedAccessScreen() {
 
     const currentCountryData = getCountryData(countryCode)
     const currentCountryEmoji = getEmojiFlag(countryCode)
+
+    const [visible, setVisible] = useState(false);
+    const sheetRef = useRef<ModalBottomSheetRef>(null);
+
+    const hideSheet = async () => {
+        await sheetRef.current?.hide();
+        setVisible(false);
+    };
 
     return(
         <View className="items-center justify-between flex-1 flex-col p-2 pt-10">
@@ -27,8 +37,10 @@ export default function InternetBlockedAccessScreen() {
             </View>
             <View className="flex gap-3 pb-10">
                 <BuyEsimButton/>
-                <Button mode="outlined">Whitelist country</Button>
+                    <Button mode="outlined">Whitelist country</Button>
             </View>
+
+
         </View>
     )
 }
