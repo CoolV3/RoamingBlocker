@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "RoamingBlocker",
-    "slug": "RoamingBlocker",
+    "name": "RoamingGuard",
+    "slug": "RoamingGuard",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "roamingblocker",
+    "scheme": "roamingguard",
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./assets/expo.icon"
@@ -18,7 +18,7 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.coolv3.RoamingBlocker"
+      "package": "com.coolv3.roamingguard"
     },
     "web": {
       "output": "static",
