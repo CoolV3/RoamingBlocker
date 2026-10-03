@@ -10,6 +10,7 @@ import androidx.core.app.NotificationCompat
 import android.content.pm.ServiceInfo
 import androidx.core.app.ServiceCompat
 import android.app.PendingIntent
+import android.net.Uri
 
 class RoamingGuardService : Service() {
 
@@ -204,15 +205,17 @@ class RoamingGuardService : Service() {
 
         val launchIntent = packageManager.getLaunchIntentForPackage(packageName) ?: return null
 
-        launchIntent.apply {
-        addFlags(
-            Intent.FLAG_ACTIVITY_NEW_TASK or
-            Intent.FLAG_ACTIVITY_CLEAR_TOP or
-            Intent.FLAG_ACTIVITY_SINGLE_TOP
-        )
 
-        putExtra(EXTRA_OPEN_BLOCKED_SCREEN,true)
-        putExtra(EXTRA_BLOCKED_COUNTRY_CODE,countryCode)
+
+        launchIntent.apply {
+            action = Intent.ACTION_VIEW
+            data = Uri.Builder().scheme("roamingguard").path("/blockedInternetAccessScreen").appendQueryParameter("countryCode", countryCode).build()
+
+            addFlags(
+                Intent.FLAG_ACTIVITY_NEW_TASK or
+                Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                Intent.FLAG_ACTIVITY_SINGLE_TOP
+            )
 
         }
         return PendingIntent.getActivity(
