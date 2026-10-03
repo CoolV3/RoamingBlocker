@@ -1,11 +1,15 @@
 import {Pressable, View, Animated, Easing, Text} from "react-native";
 import Svg, { Path } from "react-native-svg";
-import {useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import {Shield, ShieldOff} from "lucide-react-native"
 import RoamingGuard from "../../modules/roaming-guard/src/RoamingGuardModule";
 import { Host, Shape, Row } from '@expo/ui/jetpack-compose';
 import {size} from "@expo/ui/jetpack-compose/modifiers";
 import { Button, Dialog, Portal} from 'react-native-paper';
+import {useFocusEffect} from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const shapeKey = "roamingguard.ui.shape"
 
 export default function BlockRoamingButton({title, onPress}: {title: string, onPress: () => void}) {
     const [active, setActive] = useState(false)
@@ -15,6 +19,7 @@ export default function BlockRoamingButton({title, onPress}: {title: string, onP
     const animationVersion = useRef(0)
     const [isChanging, setIsChanging] = useState(false);
     const [internetBlocked, setInternetBlocked] = useState(false)
+    const [currentShape, setCurrentShape] = useState("")
 
     const setActiveAction = async () => {
         if (isChanging) return;
@@ -117,6 +122,22 @@ export default function BlockRoamingButton({title, onPress}: {title: string, onP
         };
     }, [active, rotationRef]);
 
+    useFocusEffect(
+        useCallback(() => {
+            const loadShape = async () => {
+                const storedShape = await AsyncStorage.getItem(
+                    shapeKey
+                )
+
+                if (storedShape !== null) {
+                    setCurrentShape(storedShape)
+                }
+            }
+
+            loadShape()
+        }, [])
+    )
+
     const rotation = rotationRef.interpolate({inputRange: [0,1], outputRange: ["0deg", "360deg"]})
 
     return(
@@ -136,7 +157,7 @@ export default function BlockRoamingButton({title, onPress}: {title: string, onP
                             top: 30,
                         }}>
                             <Host matchContents style={{ width: 180, height: 180 }}>
-                                <Shape.RoundedCorner
+                                {currentShape == "rounded2424" ? (<Shape.RoundedCorner
                                     cornerRadii={{
                                         topStart: 20,
                                         topEnd: 40,
@@ -145,7 +166,30 @@ export default function BlockRoamingButton({title, onPress}: {title: string, onP
                                     }}
                                     color={internetBlocked ? "#a52c0b" : (active ? "#fba32b" : "#775a32")}
                                     modifiers={[size(180, 180)]}
-                                />
+                                />) : (currentShape == "rounded2222" ? (<Shape.RoundedCorner
+                                    cornerRadii={{
+                                        topStart: 20,
+                                        topEnd: 20,
+                                        bottomStart: 20,
+                                        bottomEnd: 20,
+                                    }}
+                                    color={internetBlocked ? "#a52c0b" : (active ? "#fba32b" : "#775a32")}
+                                    modifiers={[size(180, 180)]}
+                                />) : (currentShape == "circle" ? (<Shape.Circle
+                                    radius={1}
+                                    color={internetBlocked ? "#a52c0b" : (active ? "#fba32b" : "#775a32")}
+                                    modifiers={[size(180, 180)]}
+                                />) : (currentShape == "polygon4" ? (<Shape.Polygon
+                                    color={internetBlocked ? "#a52c0b" : (active ? "#fba32b" : "#775a32")}
+                                    verticesCount={4}
+                                    cornerRounding={0.2}
+                                    modifiers={[size(180, 180)]}
+                                />) : (currentShape == "polygon6" && (<Shape.Polygon
+                                    color={internetBlocked ? "#a52c0b" : (active ? "#fba32b" : "#775a32")}
+                                    cornerRounding={0.2}
+                                    modifiers={[size(180, 180)]}
+                                />  )))))}
+
                             </Host>
                         </Animated.View>
                         {active ? (

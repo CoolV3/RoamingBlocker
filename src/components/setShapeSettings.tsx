@@ -100,18 +100,6 @@ export default function SetShapeSettings() {
                     </Box>
                 </TextButton>
 
-                <TextButton onClick={() => setShape("pill")}>
-                    <Box contentAlignment="center">
-                        {currentShape == "pill" && (<Shape.Pill
-                            color="#c77c16"
-                            modifiers={[size(55, 85)]}
-                        />)}
-                        <Shape.Pill
-                            color="#fba32b"
-                            modifiers={[size(50, 80)]}
-                        />
-                    </Box>
-                </TextButton>
 
                 <TextButton onClick={() => setShape("rounded2424")}>
                     <Box contentAlignment="center">
