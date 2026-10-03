@@ -11,11 +11,17 @@
                 android:name="expo.modules.roamingguard.RoamingGuardService"
                 android:enabled="true"
                 android:exported="false"
+                android:permission="android.permission.BIND_VPN_SERVICE"
                 android:foregroundServiceType="specialUse">
+
+            <intent-filter>
+                <action android:name="android.net.VpnService" />
+            </intent-filter>
 
             <property
                     android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
-                    android:value="Continuously monitors mobile network and roaming-country changes to alert the user when the active country changes." />
+                    android:value="Local VPN firewall that monitors roaming-country changes and blocks device network traffic on disallowed mobile networks." />
+
         </service>
     </application>
 

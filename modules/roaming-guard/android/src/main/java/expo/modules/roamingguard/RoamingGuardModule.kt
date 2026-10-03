@@ -1,12 +1,28 @@
 package expo.modules.roamingguard
 
+import android.app.Activity
 import android.content.Intent
+import android.net.VpnService
 import androidx.core.content.ContextCompat
+import expo.modules.kotlin.Promise
 import expo.modules.kotlin.functions.Coroutine
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 class RoamingGuardModule : Module() {
+
+    companion object {
+        private const val VPN_PERMISSION_REQUEST_CODE = 7201
+    }
+
+    private var pendingVpnPermissionPromise: Promise? = null
+
+    private val moduleScope =
+        CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     private val countryStorage: CountryStorage
         get() {
@@ -17,49 +33,67 @@ class RoamingGuardModule : Module() {
             return CountryStorage(context.applicationContext)
         }
 
-    override fun definition() = ModuleDefinition {
+    private fun startRoamingGuardService() {
+        val context = requireNotNull(appContext.reactContext) {
+            "React context not available"
+        }
 
+        val applicationContext = context.applicationContext
+
+        val intent = Intent(
+            applicationContext,
+            RoamingGuardService::class.java
+        ).apply {
+            action = RoamingGuardService.ACTION_START
+        }
+
+        ContextCompat.startForegroundService(
+            applicationContext,
+            intent
+        )
+    }
+
+    override fun definition() = ModuleDefinition {
         Name("RoamingGuard")
 
-        /*
-         * Explicitly typed suspend functions prevent Kotlin from
-         * choosing the wrong Coroutine overload.
-         */
+        OnActivityResult { _, payload ->
+            if (payload.requestCode != VPN_PERMISSION_REQUEST_CODE) {
+                return@OnActivityResult
+            }
 
-        val enableCountryWatchingCoroutine:
-            suspend () -> Unit = {
-                val context = requireNotNull(
-                    appContext.reactContext
-                ) {
-                    "React context not available"
+            val promise = pendingVpnPermissionPromise
+                ?: return@OnActivityResult
+
+            pendingVpnPermissionPromise = null
+
+            moduleScope.launch {
+                if (payload.resultCode != Activity.RESULT_OK) {
+                    countryStorage.setCountryWatchingEnabled(false)
+
+                    promise.reject(
+                        "ERR_VPN_PERMISSION_DENIED",
+                        "VPN permission was denied.",
+                        null
+                    )
+
+                    return@launch
                 }
-
-                val applicationContext =
-                    context.applicationContext
-
-                countryStorage.setCountryWatchingEnabled(true)
 
                 try {
-                    val intent = Intent(
-                        applicationContext,
-                        RoamingGuardService::class.java
-                    ).apply {
-                        action =
-                            RoamingGuardService.ACTION_START
-                    }
-
-                    ContextCompat.startForegroundService(
-                        applicationContext,
-                        intent
-                    )
+                    countryStorage.setCountryWatchingEnabled(true)
+                    startRoamingGuardService()
+                    promise.resolve(null)
                 } catch (exception: Exception) {
-                    countryStorage.setCountryWatchingEnabled(
-                        false
-                    )
+                    countryStorage.setCountryWatchingEnabled(false)
 
-                    throw exception
+                    promise.reject(
+                        "ERR_ROAMING_GUARD_START",
+                        "VPN permission was granted, but RoamingGuard could not be started.",
+                        exception
+                    )
                 }
             }
+        }
 
         val disableCountryWatchingCoroutine:
             suspend () -> Unit = {
@@ -74,12 +108,16 @@ class RoamingGuardModule : Module() {
 
                 countryStorage.setCountryWatchingEnabled(false)
 
-                val intent = Intent(
-                    applicationContext,
-                    RoamingGuardService::class.java
-                )
+                if (RoamingGuardService.isRunning) {
+                    val intent = Intent(
+                        applicationContext,
+                        RoamingGuardService::class.java
+                    ).apply {
+                        action = RoamingGuardService.ACTION_STOP
+                    }
 
-                applicationContext.stopService(intent)
+                    applicationContext.startService(intent)
+                }
             }
 
         val isCountryWatchingCoroutine:
@@ -102,12 +140,74 @@ class RoamingGuardModule : Module() {
                 countryStorage.getSelectedZoneIds()
             }
 
-        /*
-         * Country-watching functions.
-         */
+        AsyncFunction("enableCountryWatching") { promise: Promise ->
+            if (pendingVpnPermissionPromise != null) {
+                promise.reject(
+                    "ERR_VPN_REQUEST_IN_PROGRESS",
+                    "A VPN permission request is already in progress.",
+                    null
+                )
 
-        AsyncFunction("enableCountryWatching") Coroutine
-            enableCountryWatchingCoroutine
+                return@AsyncFunction
+            }
+
+            val context = requireNotNull(appContext.reactContext) {
+                "React context not available"
+            }
+
+            val prepareIntent = VpnService.prepare(
+                context.applicationContext
+            )
+
+            if (prepareIntent == null) {
+                moduleScope.launch {
+                    try {
+                        countryStorage.setCountryWatchingEnabled(true)
+                        startRoamingGuardService()
+                        promise.resolve(null)
+                    } catch (exception: Exception) {
+                        countryStorage.setCountryWatchingEnabled(false)
+
+                        promise.reject(
+                            "ERR_ROAMING_GUARD_START",
+                            "Failed to start RoamingGuard.",
+                            exception
+                        )
+                    }
+                }
+
+                return@AsyncFunction
+            }
+
+            val activity = appContext.currentActivity
+
+            if (activity == null) {
+                promise.reject(
+                    "ERR_ACTIVITY_UNAVAILABLE",
+                    "RoamingGuard needs an open activity to request VPN permission.",
+                    null
+                )
+
+                return@AsyncFunction
+            }
+
+            pendingVpnPermissionPromise = promise
+
+            try {
+                activity.startActivityForResult(
+                    prepareIntent,
+                    VPN_PERMISSION_REQUEST_CODE
+                )
+            } catch (exception: Exception) {
+                pendingVpnPermissionPromise = null
+
+                promise.reject(
+                    "ERR_VPN_PERMISSION_REQUEST",
+                    "Failed to open the Android VPN permission dialog.",
+                    exception
+                )
+            }
+        }
 
         AsyncFunction("disableCountryWatching") Coroutine
             disableCountryWatchingCoroutine
@@ -118,10 +218,6 @@ class RoamingGuardModule : Module() {
         Function("isCountryWatchingServiceRunning") {
             RoamingGuardService.isRunning
         }
-
-        /*
-         * Country and zone storage functions.
-         */
 
         AsyncFunction("getAllowedCountries") Coroutine
             getAllowedCountriesCoroutine
