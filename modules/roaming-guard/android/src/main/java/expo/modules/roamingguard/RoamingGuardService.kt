@@ -56,6 +56,11 @@ class RoamingGuardService : VpnService() {
     private var vpnInterface: ParcelFileDescriptor? = null
     private var packetDropThread: Thread? = null
 
+    private fun setBlockingState(blocked: Boolean) {
+        isBlocking = blocked
+        RoamingGuardModule.blockingStateListener?.invoke(blocked)
+    }
+
     override fun onCreate() {
         super.onCreate()
 
@@ -194,12 +199,12 @@ class RoamingGuardService : VpnService() {
 
             if (establishedInterface == null) {
                 vpnInterface = null
-                isBlocking = false
+                setBlockingState(false)
                 return false
             }
 
             vpnInterface = establishedInterface
-            isBlocking = true
+            setBlockingState(true)
 
             packetDropThread = Thread(
                 {
@@ -246,7 +251,7 @@ class RoamingGuardService : VpnService() {
                     }
 
                     vpnInterface = null
-                    isBlocking = false
+                    setBlockingState(false)
                 }
             }
         }
@@ -259,7 +264,7 @@ class RoamingGuardService : VpnService() {
     }
 
     private fun stopBlockingLocked() {
-        isBlocking = false
+        setBlockingState(false)
 
         try {
             vpnInterface?.close()

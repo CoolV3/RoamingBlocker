@@ -17,6 +17,9 @@ class RoamingGuardModule : Module() {
 
     companion object {
         private const val VPN_PERMISSION_REQUEST_CODE = 7201
+
+        @Volatile
+        var blockingStateListener: ((Boolean) -> Unit)? = null
     }
 
     private var pendingVpnPermissionPromise: Promise? = null
@@ -55,6 +58,20 @@ class RoamingGuardModule : Module() {
 
     override fun definition() = ModuleDefinition {
         Name("RoamingGuard")
+        Events("onBlockingStateChanged")
+
+        OnCreate {
+            blockingStateListener = { isBlocked ->
+                sendEvent(
+                    "onBlockingStateChanged",
+                    mapOf("isBlocked" to isBlocked)
+                )
+            }
+        }
+
+        OnDestroy {
+            blockingStateListener = null
+        }
 
         OnActivityResult { _, payload ->
             if (payload.requestCode != VPN_PERMISSION_REQUEST_CODE) {

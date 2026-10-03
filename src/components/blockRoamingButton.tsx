@@ -14,6 +14,7 @@ export default function BlockRoamingButton({title, onPress}: {title: string, onP
     const animationRef = useRef<Animated.CompositeAnimation | null>(null);
     const animationVersion = useRef(0)
     const [isChanging, setIsChanging] = useState(false);
+    const [internetBlocked, setInternetBlocked] = useState(false)
 
     const setActiveAction = async () => {
         if (isChanging) return;
@@ -57,8 +58,17 @@ export default function BlockRoamingButton({title, onPress}: {title: string, onP
         const loadState = async () => {
             const isWatching = await RoamingGuard.isCountryWatching()
             setActive(isWatching)
+
+            const isInternetBlocked = RoamingGuard.isInternetBlocked()
+            setInternetBlocked(isInternetBlocked)
         }
         void loadState()
+
+        const subscription = RoamingGuard.addListener("onBlockingStateChanged", ({isBlocked}) => {setInternetBlocked(isBlocked)})
+
+        return () => {
+            subscription.remove()
+        }
     }, []);
 
     useEffect(() => {
@@ -133,7 +143,7 @@ export default function BlockRoamingButton({title, onPress}: {title: string, onP
                                         bottomStart: 40,
                                         bottomEnd: 20,
                                     }}
-                                    color={active ? "#fba32b" : "#775a32"}
+                                    color={internetBlocked ? "#a52c0b" : (active ? "#fba32b" : "#775a32")}
                                     modifiers={[size(180, 180)]}
                                 />
                             </Host>

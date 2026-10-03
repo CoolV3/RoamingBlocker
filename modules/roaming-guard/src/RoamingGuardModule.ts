@@ -6,7 +6,13 @@ export type RoamingZone = {
   countries: string[];
 };
 
-declare class RoamingGuardModule extends NativeModule<{}> {
+type RoamingGuardEvents = {
+  onBlockingStateChanged(
+      event: { isBlocked: boolean }
+  ): void;
+};
+
+declare class RoamingGuardModule extends NativeModule<RoamingGuardEvents> {
   getAllowedCountries(): Promise<string[]>;
   getStandaloneCountries(): Promise<string[]>;
   getSelectedZoneIds(): Promise<string[]>;
