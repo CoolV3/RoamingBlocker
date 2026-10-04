@@ -8,7 +8,6 @@ import {size} from "@expo/ui/jetpack-compose/modifiers";
 import { Button, Dialog, Portal} from 'react-native-paper';
 import {useFocusEffect} from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
 const shapeKey = "roamingguard.ui.shape"
 
 export default function BlockRoamingButton({title, onPress}: {title: string, onPress: () => void}) {

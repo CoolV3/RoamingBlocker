@@ -1,7 +1,7 @@
 import {Tabs} from "expo-router";
 import { Home, Funnel, Settings } from "lucide-react-native";
 import {Pressable} from "react-native";
-import * as Haptics from "expo-haptics";
+import {selectionHaptic} from "@/lib/useHaptics";
 
 export default function NavbarLayout() {
 
@@ -17,7 +17,7 @@ export default function NavbarLayout() {
             )
         }} screenListeners={{
             tabPress: () => {
-                void Haptics.selectionAsync()
+                void selectionHaptic()
             }
         }}>
             <Tabs.Screen name="homepage" options={{
