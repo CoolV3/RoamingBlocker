@@ -3,6 +3,7 @@ import SetShapeSettings from "@/components/setShapeSettings";
 import DisableAffiliateLinks from "@/components/disableAffiliateLinksButton";
 import DisableHapicButton from "@/components/disableHapticsButton";
 import {Text} from "react-native-paper"
+import LightDarkModeToggle from "@/components/LightDarkModetoggle";
 
 
 export default function SettingsPage() {
@@ -18,6 +19,9 @@ export default function SettingsPage() {
             </View>
             <View className="w-full">
                 <DisableHapicButton/>
+            </View>
+            <View className="w-full">
+                <LightDarkModeToggle/>
             </View>
         </View>
     )

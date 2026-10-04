@@ -1,4 +1,4 @@
-import {useCallback, useRef, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import {
     Host,
     ModalBottomSheet,
@@ -18,6 +18,8 @@ import {clickable, paddingAll, size, clip, Shapes, fillMaxWidth, height, width} 
 import {ArrowUpRight, ArrowRight, CardSim} from "lucide-react-native";
 import {useFocusEffect} from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {useColorScheme} from "react-native";
+import {getThemeMode, subscribeToTheme, ThemeMode} from "@/lib/themeStore";
 
 type EsimProvider = {
     name: string,
@@ -87,8 +89,27 @@ export default function buyEsimButton() {
         }, [])
     )
 
+    const systemColorScheme = useColorScheme();
+    const [themeMode, setThemeMode] =
+        useState<ThemeMode>("system");
+
+    useEffect(() => {
+        const loadTheme = async () => {
+            setThemeMode(await getThemeMode());
+        };
+
+        void loadTheme();
+
+        return subscribeToTheme((newTheme) => {
+            setThemeMode(newTheme);
+        });
+    }, []);
+
+    const expoUIColorScheme: "light" | "dark" = themeMode === "system" ? systemColorScheme === "dark" ? "dark" : "light" : themeMode
+
+
     return (
-        <Host matchContents>
+        <Host matchContents colorScheme={expoUIColorScheme}>
             <Button
                 onClick={() => setVisible(true)}
                 colors={{

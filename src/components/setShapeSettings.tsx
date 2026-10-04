@@ -25,7 +25,6 @@ export default function SetShapeSettings() {
     const setShape = async (id: string) =>  {
         await AsyncStorage.setItem(shapeKey, String(id))
         setCurrentShape(id)
-        console.log(id)
     }
 
     useFocusEffect(
