@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import {useCallback, useRef, useState} from 'react';
 import {
     Host,
     ModalBottomSheet,
@@ -16,12 +16,15 @@ import * as Linking from "expo-linking";
 import type { ModalBottomSheetRef } from '@expo/ui/jetpack-compose';
 import {clickable, paddingAll, size, clip, Shapes, fillMaxWidth, height, width} from '@expo/ui/jetpack-compose/modifiers';
 import {ArrowUpRight, ArrowRight, CardSim} from "lucide-react-native";
+import {useFocusEffect} from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type EsimProvider = {
     name: string,
     description: string,
     color: string,
-    url: string
+    url: string,
+    affiliateUrl: string,
 }
 
 const featuredEsimProvider: EsimProvider = {
@@ -29,7 +32,10 @@ const featuredEsimProvider: EsimProvider = {
     description: "Simple plans for international travel",
     color: "#6C5CE7",
     url: "https://saily.com/",
+    affiliateUrl: "https://saily.com/",
 }
+
+const affiliateStatusKey = "roamingguard.ui.affiliateStatus"
 
 const esimProviders: EsimProvider[] = [
     {
@@ -37,23 +43,27 @@ const esimProviders: EsimProvider[] = [
         description: "Global and regional data plans",
         color: "#E91E63",
         url: "https://www.airalo.com/",
+        affiliateUrl: "https://www.airalo.com/",
     },
     {
         name: "Holafly",
         description: "Unlimited-data options for many destinations",
         color: "#00A86B",
         url: "https://esim.holafly.com/",
+        affiliateUrl: "https://esim.holafly.com/",
     },
     {
         name: "Nomad",
         description: "Flexible country and regional plans",
         color: "#2D7FF9",
         url: "https://www.getnomad.app/",
+        affiliateUrl: "https://www.getnomad.app/",
     },
 ];
 
 export default function buyEsimButton() {
     const [visible, setVisible] = useState(false);
+    const [useAffiliateLinks, setUseAffiliateLinks] = useState(false)
     const sheetRef = useRef<ModalBottomSheetRef>(null);
 
     const hideSheet = async () => {
@@ -64,6 +74,18 @@ export default function buyEsimButton() {
     const openUrl = async (url: string) => {
         await Linking.openURL(url)
     }
+
+    useFocusEffect(
+        useCallback(() => {
+            const loadAffiliateStatus = async () => {
+                const status = await AsyncStorage.getItem(affiliateStatusKey)
+                if (status != null) {
+                    setUseAffiliateLinks(status == "true")
+                }
+            }
+            void loadAffiliateStatus()
+        }, [])
+    )
 
     return (
         <Host matchContents>
@@ -117,11 +139,11 @@ export default function buyEsimButton() {
                         <Text style={{fontSize: 24, fontWeight: "bold",}}>Get an eSIM</Text>
 
                         <Text style={{fontSize: 14}}>
-                            Choose a provider and compare available travel data plans.
+                            Choose a provider and start browsing
                         </Text>
 
                         <Column verticalArrangement={{ spacedBy: 8 }} >
-                            <ListItem modifiers={[fillMaxWidth(), clickable(() => openUrl(featuredEsimProvider.url)), clip(Shapes.RoundedCorner(20))]} colors={{
+                            <ListItem modifiers={[fillMaxWidth(), clickable(() => {useAffiliateLinks ? openUrl(featuredEsimProvider.affiliateUrl) : openUrl(featuredEsimProvider.url)}), clip(Shapes.RoundedCorner(20))]} colors={{
                                 containerColor: "#FF6B00",
                             }}>
                                 <ListItem.HeadlineContent>
@@ -139,7 +161,7 @@ export default function buyEsimButton() {
                             </ListItem>
                             <HorizontalDivider />
                             {esimProviders.map((provider) => (
-                                <ListItem key={provider.name} modifiers={[fillMaxWidth(), clickable(() => openUrl(provider.url)), clip(Shapes.RoundedCorner(20))]} colors={{
+                                <ListItem key={provider.name} modifiers={[fillMaxWidth(), clickable(() => {useAffiliateLinks ? openUrl(provider.affiliateUrl) : openUrl(provider.url)}), clip(Shapes.RoundedCorner(20))]} colors={{
                                     containerColor: "#775a32",
                                 }}>
                                     <ListItem.HeadlineContent>
@@ -158,13 +180,9 @@ export default function buyEsimButton() {
                             ))}
                         </Column>
 
-                        <Text
-                            style={{
-                                fontSize: 12,
-                            }}
-                        >
-                            RoamingGuard does not sell eSIMs directly. The selected provider
-                            opens in your browser.
+                        <Text style={{fontSize: 12,}}>
+                            RoamingGuard does not sell eSIMs directly.
+                            {useAffiliateLinks ? " The links above are affiliate links. You are supporting the app. The selected provider opens in your browser." : " You disabled affiliate links in settings, so links just open the website from the provider in your browser. "}
                         </Text>
 
                         <Button onClick={hideSheet} modifiers={[fillMaxWidth(), paddingAll(2)]}>

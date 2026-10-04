@@ -1,14 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {useFocusEffect} from "expo-router";
 import {useCallback, useState} from "react";
-// import { Switch, List } from 'react-native-paper';
 import {Box, Host, ListItem, Switch, Text} from '@expo/ui/jetpack-compose'
-import {Info} from "lucide-react-native"
 import {clip, fillMaxWidth, Shapes, width} from "@expo/ui/jetpack-compose/modifiers";
 import {background} from "@expo/ui/swift-ui/modifiers";
-import {View} from "react-native";
-import InfoIcon from "@expo/material-symbols/info.xml";
-
 const affiliateStatusKey = "roamingguard.ui.affiliateStatus"
 
 export default function DisableAffiliateLinks() {
@@ -41,7 +36,6 @@ export default function DisableAffiliateLinks() {
                     <ListItem.SupportingContent>
                         <Text style={{ typography: 'bodyMedium' }}>Disable all affiliate links on the buy esim selector</Text>
                     </ListItem.SupportingContent>
-
                     <ListItem.TrailingContent>
                         <Switch value={currentAffiliateStatus} onCheckedChange={updateAffiliateStatus} colors={{
                             checkedThumbColor: '#bf7209',
