@@ -1,11 +1,11 @@
-import {Pressable, View, Animated, Easing, Text} from "react-native";
+import {Pressable, View, Animated, Easing} from "react-native";
 import Svg, { Path } from "react-native-svg";
 import {useCallback, useEffect, useRef, useState} from "react";
 import {Shield, ShieldOff} from "lucide-react-native"
 import RoamingGuard from "../../modules/roaming-guard/src/RoamingGuardModule";
 import { Host, Shape, Row } from '@expo/ui/jetpack-compose';
 import {size} from "@expo/ui/jetpack-compose/modifiers";
-import { Button, Dialog, Portal} from 'react-native-paper';
+import { Button, Dialog, Portal, Text} from 'react-native-paper';
 import {useFocusEffect} from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 const shapeKey = "roamingguard.ui.shape"
@@ -200,7 +200,7 @@ export default function BlockRoamingButton({title, onPress}: {title: string, onP
                     </View>
                 )}
             </Pressable>
-            <Text className="text-center text-lg">{active ? "Roaming Guard is active." : "Roaming Guard is inactive"}</Text>
+            <Text style={{ textAlign: "center" }} className="text-lg">{active ? "Roaming Guard is active." : "Roaming Guard is inactive"}</Text>
 
             <Portal>
                 <Dialog visible={showVPNDenied} onDismiss={() => setShowVPNDenied(false)}>

@@ -1,7 +1,8 @@
-import {View, Text} from "react-native";
+import {View} from "react-native";
 import SetShapeSettings from "@/components/setShapeSettings";
 import DisableAffiliateLinks from "@/components/disableAffiliateLinksButton";
 import DisableHapicButton from "@/components/disableHapticsButton";
+import {Text} from "react-native-paper"
 
 
 export default function SettingsPage() {

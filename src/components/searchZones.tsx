@@ -1,5 +1,5 @@
-import {View, Text, FlatList, Pressable, ScrollView} from "react-native";
-import {Searchbar, List, Portal, Dialog, Button} from 'react-native-paper';
+import {View, FlatList, Pressable, ScrollView} from "react-native";
+import {Searchbar, List, Portal, Dialog, Button, Text, useTheme} from 'react-native-paper';
 import {useCallback, useMemo, useState} from "react";
 import {useRouter} from "expo-router";
 import {RadioTower} from "lucide-react-native";
@@ -11,6 +11,8 @@ import { type RoamingZone } from "../../modules/roaming-guard/src/RoamingGuardMo
 
 
 export default function SearchZones() {
+
+    const theme = useTheme();
 
     const router = useRouter()
 
@@ -66,7 +68,7 @@ export default function SearchZones() {
                     <View>
                         {(filteredZones?.length ?? 0 ) > 0 ? (
                             <FlatList data={filteredZones ?? []} renderItem={({item}) => (
-                                <List.Item description={`${item.countries.length} countries`} onPress={() => showZoneChoice(item)}  title={item.name} left={() => (<RadioTower size={30}/>)}/>
+                                <List.Item description={`${item.countries.length} countries`} onPress={() => showZoneChoice(item)}  title={item.name} left={() => (<RadioTower color={theme.colors.onSurface} size={30}/>)}/>
                             )} />
 
                         ): (
@@ -81,9 +83,9 @@ export default function SearchZones() {
                     <Dialog.Title>Alert</Dialog.Title>
                     <Dialog.Content className="flex items-center gap-2">
                         <Text className="text-lg">Would you like to add</Text>
-                        <View className="flex items-center border-2 p-4 rounded-2xl">
+                        <View className="flex items-center border-2 p-4 rounded-2xl" style={{ borderColor: theme.colors.primary }}>
                             <Text className="text-5xl"><RadioTower size={30}/></Text>
-                            <Text className="text-3xl text-center">{currentZone?.name}</Text>
+                            <Text style={{ textAlign: "center" }} className="text-3xl text-center">{currentZone?.name}</Text>
                         </View>
                         <Text className="text-lg">to allowed list?</Text>
                         <Button onPress={() => setExpanded(!expanded)}>{expanded ? "Show less" : "Show countries"}</Button>

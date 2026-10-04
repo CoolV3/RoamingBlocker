@@ -2,13 +2,22 @@ import {Tabs} from "expo-router";
 import { Home, Funnel, Settings } from "lucide-react-native";
 import {Pressable} from "react-native";
 import {selectionHaptic} from "@/lib/useHaptics";
+import { useTheme } from "react-native-paper";
 
 export default function NavbarLayout() {
+    const theme = useTheme();
 
     return (
         <Tabs initialRouteName="homepage" screenOptions={{headerShown: false,
-            tabBarActiveTintColor: "#fba32b",
+            tabBarActiveTintColor: theme.colors.primary,
             tabBarInactiveTintColor: "#775a32",
+            sceneStyle: {
+                backgroundColor: theme.colors.background
+            },
+            tabBarStyle: {
+                backgroundColor: theme.colors.surface,
+                borderTopColor: theme.colors.outlineVariant,
+            },
 
             tabBarButton: (props) => (
                 <Pressable

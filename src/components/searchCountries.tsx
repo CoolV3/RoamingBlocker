@@ -1,11 +1,13 @@
-import {View, Text, FlatList, Pressable} from "react-native";
-import {Searchbar, List, Portal, Dialog, Button} from 'react-native-paper';
+import {View, FlatList, Pressable} from "react-native";
+import {Searchbar, List, Portal, Dialog, Button, Text, useTheme} from 'react-native-paper';
 import {useCallback, useMemo, useState} from "react";
 import {useRouter} from "expo-router";
 import {getCountryDataList, getEmojiFlag, TCountryCode} from "countries-list";
 import RoamingGuard from "../../modules/roaming-guard/src/RoamingGuardModule";
 
 export default function SearchCountries() {
+
+    const theme = useTheme();
 
     const [search, setSearch] = useState("")
     const router = useRouter()
@@ -79,9 +81,9 @@ export default function SearchCountries() {
                     <Dialog.Title>Alert</Dialog.Title>
                     <Dialog.Content className="flex items-center gap-2">
                         <Text className="text-lg">Would you like to add</Text>
-                        <View className="flex items-center border-2 p-4 rounded-2xl">
+                        <View className="flex items-center border-2 p-4 rounded-2xl" style={{ borderColor: theme.colors.primary }}>
                             <Text className="text-5xl">{currentCountry?.flag}</Text>
-                            <Text className="text-3xl text-center">{currentCountry?.name}</Text>
+                            <Text style={{ textAlign: "center" }} className="text-3xl text-center">{currentCountry?.name}</Text>
                         </View>
                         <Text className="text-lg">to allowed list?</Text>
                     </Dialog.Content>

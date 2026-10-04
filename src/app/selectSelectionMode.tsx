@@ -1,5 +1,5 @@
-import {View, Text, FlatList, Pressable} from "react-native";
-import {Appbar, Card, Button} from 'react-native-paper';
+import {View, FlatList, Pressable} from "react-native";
+import {Appbar, Card, Button, Text} from 'react-native-paper';
 import {useRouter} from "expo-router";
 
 export default function AddNewCountriesPage() {

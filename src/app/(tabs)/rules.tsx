@@ -1,6 +1,6 @@
-import {View, Text, ScrollView, Pressable} from "react-native";
+import {View, ScrollView, Pressable} from "react-native";
 import {Trash, RadioTower, ChevronUp, ChevronDown} from "lucide-react-native"
-import {Button, Dialog, List, Portal} from 'react-native-paper';
+import {Button, Dialog, Divider, List, Portal, Text, useTheme} from 'react-native-paper';
 import { useRouter } from "expo-router";
 
 import RoamingGuard, {type RoamingZone} from "../../../modules/roaming-guard/src/RoamingGuardModule";
@@ -26,6 +26,8 @@ export default function RulesPage() {
     const [showDeleteWarning, setShowDeleteWarning] = useState(false)
     const [showDeleteZoneWarning, setShowDeleteZoneWarning] = useState(false)
     const [deleteId, setDeleteId] = useState("")
+
+    const theme = useTheme();
 
     const toggleZone = (zoneId: string) => {
         setExpandedZones((current) => {
@@ -110,13 +112,14 @@ export default function RulesPage() {
             <Text className="text-4xl font-bold text-orange-500 pb-10">Rules</Text>
             <View className="flex gap-5">
                 <View className="w-full flex-1 justify-start items-center">
-                    <Text className="text-lg border-b-2">Allowed countries</Text>
+                    <Text className="text-lg">Allowed countries</Text>
+                    <Divider className="w-50" bold={true}/>
                     <ScrollView className="w-full py-2" contentContainerClassName="gap-2 pb-10" showsVerticalScrollIndicator={false}>
                         {zones.map((zone, index) => {
                             const isExpanded = expandedZones.has(zone.id);
                             return (
                             <View key={index}>
-                                <List.Item description={`${zone.countries.length} countries`}  className="flex flex-row" title={() => (<Text className="text-lg">{zone.name}</Text>)} left={() => isExpanded ? ( <ChevronUp size={30} onPress={() => toggleZone(zone.id)}/> ) : (<ChevronDown size={30} onPress={() => toggleZone(zone.id)}/>)} right={() => (<Trash size={30} onPress={() => deleteZone(zone.id)}/>)}/>
+                                <List.Item description={`${zone.countries.length} countries`}  className="flex flex-row" title={() => (<Text className="text-lg">{zone.name}</Text>)} left={() => isExpanded ? ( <ChevronUp color={theme.colors.onSurface} size={30} onPress={() => toggleZone(zone.id)}/> ) : (<ChevronDown color={theme.colors.onSurface} size={30} onPress={() => toggleZone(zone.id)}/>)} right={() => (<Trash color={theme.colors.error} size={30} onPress={() => deleteZone(zone.id)}/>)}/>
                                 {isExpanded && (
                                     <View>
                                         {zone.countries.map((code) => {
@@ -135,7 +138,7 @@ export default function RulesPage() {
                         {allowedCountries.length != 0 && (
                             <View>
                                 {allowedCountries.map((country, index) => (
-                                    <List.Item key={index} className="flex flex-row" title={() => (<Text className="text-lg">{country.name}</Text>)} left={() => (<Text className="text-2xl">{country.flag}</Text>)} right={() => (<Trash size={30} onPress={() => deleteCountry(country.countryCode)}/>)}/>
+                                    <List.Item key={index} className="flex flex-row" title={() => (<Text className="text-lg">{country.name}</Text>)} left={() => (<Text className="text-2xl">{country.flag}</Text>)} right={() => (<Trash color={theme.colors.error} size={30} onPress={() => deleteCountry(country.countryCode)}/>)}/>
                                 ))}
                             </View>
                         )}
@@ -175,7 +178,7 @@ export default function RulesPage() {
                                     </Dialog.Content>
                                     <Dialog.Actions>
                                         <Button mode="contained" className="px-2" onPress={() => setShowDeleteZoneWarning(false)}>Back</Button>
-                                        <Button onPress={() => deleteZoneFinally(deleteId)} textColor="#f44336">Delete</Button>
+                                        <Button  onPress={() => deleteZoneFinally(deleteId)} textColor="#f44336">Delete</Button>
                                     </Dialog.Actions>
                                 </Dialog>
                             </Portal>
