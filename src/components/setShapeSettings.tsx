@@ -52,34 +52,42 @@ export default function SetShapeSettings() {
                 <TextButton onClick={() => setShape("polygon6")}>
                     <Box contentAlignment="center">
                         {currentShape == "polygon6" && (<Shape.Polygon
+                            key="polygon6-border"
                             color="#c77c16"
                             cornerRounding={0.2}
-                            modifiers={[size(82, 82)]}
+                            verticesCount={6}
+                            modifiers={[size(85, 85)]}
 
                         />)}
 
 
                         <Shape.Polygon
+                            key="polygon6-main"
                             color="#fba32b"
                             cornerRounding={0.2}
+                            verticesCount={6}
                             modifiers={[size(76, 76)]}
                         />
                     </Box>
                 </TextButton>
 
                 <TextButton onClick={() => setShape("polygon4")}>
-                    <Box contentAlignment="center">
-                        {currentShape == "polygon4" && (<Shape.Polygon
-                            color="#c77c16"
-                            verticesCount={4}
-                            cornerRounding={0.2}
-                            modifiers={[size(95, 95)]}
-                        />)}
-                        <Shape.Polygon
+                    <Box
+                        contentAlignment="center"
+                        modifiers={[size(105, 105)]}
+                    >
+                        {currentShape === "polygon4" && (
+                            <Shape.Rectangle
+                                color="#c77c16"
+                                cornerRounding={0.2}
+                                modifiers={[size(76, 76)]}
+                            />
+                        )}
+
+                        <Shape.Rectangle
                             color="#fba32b"
-                            verticesCount={4}
                             cornerRounding={0.2}
-                            modifiers={[size(90, 90)]}
+                            modifiers={[size(70, 70)]}
                         />
                     </Box>
                 </TextButton>
@@ -87,9 +95,9 @@ export default function SetShapeSettings() {
                 <TextButton onClick={() => setShape("circle")}>
                     <Box contentAlignment="center">
                         {currentShape == "circle" && (<Shape.Circle
-                            radius={1}
+                            radius={1.03}
                             color="#c77c16"
-                            modifiers={[size(85, 85)]}
+                            modifiers={[size(89,89)]}
                         />)}
                         <Shape.Circle
                             radius={1}
@@ -110,7 +118,7 @@ export default function SetShapeSettings() {
                                 bottomEnd: 20,
                             }}
                             color="#c77c16"
-                            modifiers={[size(85, 85)]}
+                            modifiers={[size(82, 82)]}
                         />)}
                         <Shape.RoundedCorner
                             cornerRadii={{
@@ -120,32 +128,32 @@ export default function SetShapeSettings() {
                                 bottomEnd: 20,
                             }}
                             color="#fba32b"
-                            modifiers={[size(80, 80)]}
+                            modifiers={[size(76, 76)]}
                         />
                     </Box>
                 </TextButton>
 
-                <TextButton onClick={() => setShape("rounded2222")}>
+                <TextButton onClick={() => setShape("rounded3113")}>
                     <Box contentAlignment="center">
-                        {currentShape == "rounded2222" && (<Shape.RoundedCorner
+                        {currentShape == "rounded3113" && (<Shape.RoundedCorner
                             cornerRadii={{
-                                topStart: 20,
-                                topEnd: 20,
-                                bottomStart: 20,
-                                bottomEnd: 20,
+                                topStart: 30,
+                                topEnd: 10,
+                                bottomStart: 10,
+                                bottomEnd: 30,
                             }}
                             color="#c77c16"
-                            modifiers={[size(85, 85)]}
+                            modifiers={[size(84, 89)]}
                         />)}
                         <Shape.RoundedCorner
                             cornerRadii={{
-                                topStart: 20,
-                                topEnd: 20,
-                                bottomStart: 20,
-                                bottomEnd: 20,
+                                topStart: 30,
+                                topEnd: 10,
+                                bottomStart: 10,
+                                bottomEnd: 30,
                             }}
                             color="#fba32b"
-                            modifiers={[size(80, 80)]}
+                            modifiers={[size(76, 76)]}
                         />
                     </Box>
                 </TextButton>

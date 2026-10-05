@@ -165,12 +165,12 @@ export default function BlockRoamingButton({title, onPress}: {title: string, onP
                                     }}
                                     color={internetBlocked ? "#a52c0b" : (active ? "#fba32b" : "#775a32")}
                                     modifiers={[size(180, 180)]}
-                                />) : (currentShape == "rounded2222" ? (<Shape.RoundedCorner
+                                />) : (currentShape == "rounded3113" ? (<Shape.RoundedCorner
                                     cornerRadii={{
-                                        topStart: 20,
-                                        topEnd: 20,
-                                        bottomStart: 20,
-                                        bottomEnd: 20,
+                                        topStart: 30,
+                                        topEnd: 10,
+                                        bottomStart: 10,
+                                        bottomEnd: 30
                                     }}
                                     color={internetBlocked ? "#a52c0b" : (active ? "#fba32b" : "#775a32")}
                                     modifiers={[size(180, 180)]}
@@ -178,9 +178,8 @@ export default function BlockRoamingButton({title, onPress}: {title: string, onP
                                     radius={1}
                                     color={internetBlocked ? "#a52c0b" : (active ? "#fba32b" : "#775a32")}
                                     modifiers={[size(180, 180)]}
-                                />) : (currentShape == "polygon4" ? (<Shape.Polygon
+                                />) : (currentShape == "polygon4" ? (<Shape.Rectangle
                                     color={internetBlocked ? "#a52c0b" : (active ? "#fba32b" : "#775a32")}
-                                    verticesCount={4}
                                     cornerRounding={0.2}
                                     modifiers={[size(180, 180)]}
                                 />) : (currentShape == "polygon6" && (<Shape.Polygon

@@ -86,7 +86,7 @@ export default function RulesPage() {
         setDeleteId(countryCode)
         setShowDeleteWarning(true)
     }
-    const deleteZone =  (countryCode: TCountryCode) => {
+    const deleteZone =  (countryCode: string) => {
         setDeleteId(countryCode)
         setShowDeleteZoneWarning(true)
     }
@@ -144,7 +144,7 @@ export default function RulesPage() {
                         )}
                         {allowedCountries.length == 0 && zones.length == 0 && (
                             <View className="flex items-center justify-center p-5 gap-3">
-                                <Text className="text-lg text-center">Nothing here, but you can change that.</Text>
+                                <Text style={{ textAlign: "center" }} className="text-lg text-center">Nothing here, but you can change that.</Text>
                                 <Button onPress={() => router.push("/selectSelectionMode")}  mode="contained" className="flex flex-row items-center justify-center">Add countries</Button>
                             </View>
                         )}

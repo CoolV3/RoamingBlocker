@@ -13,7 +13,8 @@ export default function DisableAffiliateLinks() {
     const [currentAffiliateStatus, setCurrentAffiliateStatus] = useState(true)
 
     const updateAffiliateStatus = async (value: boolean) => {
-        await AsyncStorage.setItem(affiliateStatusKey, String(value))
+        const convertedValue = !value
+        await AsyncStorage.setItem(affiliateStatusKey, String(convertedValue))
         await selectionHaptic()
         setCurrentAffiliateStatus(value)
     }
