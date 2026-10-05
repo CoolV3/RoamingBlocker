@@ -5,7 +5,7 @@ import {useRouter} from "expo-router";
 import {getCountryDataList, getEmojiFlag, TCountryCode} from "countries-list";
 import RoamingGuard from "../../modules/roaming-guard/src/RoamingGuardModule";
 
-export default function SearchCountries() {
+export default function SearchCountries(onboarding: {onboarding: boolean}) {
 
     const theme = useTheme();
 
@@ -54,6 +54,10 @@ export default function SearchCountries() {
             return
         }
         void addCountry(currentCountry?.countryCode)
+        if (onboarding) {
+            router.push("/onboarding/step1AddCountries?added=true")
+            return
+        }
         router.push("/(tabs)/rules")
 
     }

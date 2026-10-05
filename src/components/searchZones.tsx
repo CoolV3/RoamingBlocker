@@ -10,7 +10,7 @@ import RoamingGuard from "../../modules/roaming-guard/src/RoamingGuardModule";
 import { type RoamingZone } from "../../modules/roaming-guard/src/RoamingGuardModule";
 
 
-export default function SearchZones() {
+export default function SearchZones(onboarding: {onboarding: boolean}) {
 
     const theme = useTheme();
 
@@ -51,6 +51,10 @@ export default function SearchZones() {
 
         setShowDialog(false);
         setCurrentZone(null);
+        if (onboarding) {
+            router.push("/onboarding/step1AddCountries?added=true")
+            return
+        }
         router.replace("/(tabs)/rules");
     }, [currentZone, router]);
 

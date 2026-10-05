@@ -1,9 +1,12 @@
 import {View, FlatList, Pressable} from "react-native";
 import {Appbar, Card, Button, Text} from 'react-native-paper';
 import {useRouter} from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 
 export default function AddNewCountriesPage() {
     const router = useRouter()
+    const {onboarding} = useLocalSearchParams<{onboarding?: string}>()
+    const isOnboardingActive = onboarding == "true"
 
     return(
         <View className="flex-1">
@@ -21,8 +24,8 @@ export default function AddNewCountriesPage() {
                     </Card.Content>
 
                     <Card.Actions>
-                        <Button onPress={() => router.push("/addByCountry")}>Add countries</Button>
-                        <Button onPress={() => router.push("/addByZone")}>Add zones</Button>
+                        <Button onPress={() => router.push(isOnboardingActive ? "/addByCountry" : "/addByCountry?onboarding=true")}>Add countries</Button>
+                        <Button onPress={() => router.push(isOnboardingActive ? "/addByZone" : "/addByZone?onboarding=true")}>Add zones</Button>
                     </Card.Actions>
                 </Card>
             </View>

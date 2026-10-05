@@ -1,10 +1,12 @@
 import {View} from "react-native";
 import SearchCountries from "@/components/searchCountries";
 import {Appbar} from "react-native-paper";
-import {useRouter} from "expo-router";
+import {useLocalSearchParams, useRouter} from "expo-router";
 
 export default function AddByCountrie() {
     const router = useRouter()
+    const {onboarding} = useLocalSearchParams<{onboarding?: string}>()
+    const isOnboardingActive = onboarding == "true"
 
     return (
         <View>
@@ -13,7 +15,7 @@ export default function AddByCountrie() {
                 <Appbar.BackAction onPress={() => {router.back()}} />
             </Appbar.Header>
 
-            <SearchCountries/>
+            <SearchCountries onboarding={isOnboardingActive}/>
         </View>
     )
 }
