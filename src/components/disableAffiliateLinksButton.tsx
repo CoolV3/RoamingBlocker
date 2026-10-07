@@ -4,10 +4,11 @@ import {useCallback, useEffect, useState} from "react";
 import {Box, Host, ListItem, Switch, Text} from '@expo/ui/jetpack-compose'
 import {clip, fillMaxWidth, Shapes, width} from "@expo/ui/jetpack-compose/modifiers";
 import {background} from "@expo/ui/swift-ui/modifiers";
-const affiliateStatusKey = "roamingguard.ui.affiliateStatus"
 import {selectionHaptic} from "@/lib/useHaptics";
 import {useColorScheme} from "react-native";
 import {getThemeMode, subscribeToTheme, ThemeMode} from "@/lib/themeStore";
+
+const affiliateStatusKey = "roamingguard.ui.affiliateStatus"
 
 export default function DisableAffiliateLinks() {
     const [currentAffiliateStatus, setCurrentAffiliateStatus] = useState(true)
@@ -24,7 +25,7 @@ export default function DisableAffiliateLinks() {
             const loadAffiliateStatus = async () => {
                 const status = await AsyncStorage.getItem(affiliateStatusKey)
                 if (status != null) {
-                    setCurrentAffiliateStatus(status == "true")
+                    setCurrentAffiliateStatus(status != "true")
                 }
             }
             void loadAffiliateStatus()

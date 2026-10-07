@@ -96,7 +96,7 @@ export default function OnboardingWelcomeScreen() {
             )}
             {step == 2 && (
                 <View>
-                    <Button onPress={() => router.push("/(tabs)/homepage")} mode="contained" contentStyle={{ paddingHorizontal: 6, paddingVertical: 4 }} labelStyle={{ fontSize: 20, lineHeight: 36 }} >Finish onboarding</Button>
+                    <Button onPress={() => router.push("/onboarding/onboardingFinished")} mode="contained" contentStyle={{ paddingHorizontal: 6, paddingVertical: 4 }} labelStyle={{ fontSize: 20, lineHeight: 36 }}>Next step</Button>
                 </View>
             )}
 

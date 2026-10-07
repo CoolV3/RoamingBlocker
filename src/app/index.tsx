@@ -5,10 +5,7 @@ import {useEffect, useState} from "react";
 const onboardingKey = "roamingguard.ui.onboardingCompleted"
 
 export default function Index() {
-  const [onboardingCompleted, setOnboardingCompleted] = useState<boolean | null>(false)
-
-
-
+  const [onboardingCompleted, setOnboardingCompleted] = useState<boolean | null>(null)
 
   useEffect(() => {
     const loadOnboardingStatus = async() => {
