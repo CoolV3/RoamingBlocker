@@ -1,6 +1,6 @@
 import {View} from "react-native";
 import {Text, Button, useTheme} from "react-native-paper"
-import {ArrowRight, Sparkles} from "lucide-react-native";
+import {ArrowRight, Sparkles, Sparkle, UserShield} from "lucide-react-native";
 import {useRouter} from "expo-router";
 export default function OnboardingWelcomeScreen() {
     const router = useRouter()
@@ -9,7 +9,7 @@ export default function OnboardingWelcomeScreen() {
         <View className="flex items-center justify-between pt-20 h-full pb-5 p-2">
             <View>
                 <View className="mb-2 items-center justify-center rounded-full p-5 w-20 self-center" style={{backgroundColor: theme.colors.primaryContainer}}>
-                    <Sparkles color={theme.colors.primary} size={40} className="bg-r"/>
+                    <UserShield color={theme.colors.primary} size={40} className="bg-r"/>
                 </View>
 
                 <Text style={{textAlign: "center"}} className="text-2xl font-bold">Welcome to</Text>
@@ -20,7 +20,7 @@ export default function OnboardingWelcomeScreen() {
                 </Text>
             </View>
             <View>
-                <Button onPress={() => router.push("/onboarding/step1AddCountries")} mode="contained" contentStyle={{ paddingHorizontal: 6, paddingVertical: 4 }} labelStyle={{ fontSize: 20, lineHeight: 36 }} >Get Started</Button>
+                <Button onPress={() => router.push("/onboarding/howItWorks")} mode="contained" contentStyle={{ paddingHorizontal: 6, paddingVertical: 4 }} labelStyle={{ fontSize: 20, lineHeight: 36 }} >Get Started</Button>
             </View>
         </View>
     )
