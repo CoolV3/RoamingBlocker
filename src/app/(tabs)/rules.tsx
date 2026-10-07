@@ -109,7 +109,7 @@ export default function RulesPage() {
 
     return (
         <View className="items-center justify-start flex-1 flex-col p-2 pt-10">
-            <Text className="text-4xl font-bold text-orange-500 pb-10">Rules</Text>
+            <Text className="text-4xl font-bold text-orange-500 pb-10" style={{color: theme.colors.primary, fontWeight: "bold"}}>Rules</Text>
             <View className="flex gap-5">
                 <View className="w-full flex-1 justify-start items-center">
                     <Text className="text-lg">Allowed countries</Text>
