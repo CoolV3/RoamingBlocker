@@ -23,7 +23,7 @@ export default function OnboardingWelcomeScreen() {
                             </Text>
                         </View>
                         <View>
-                            <Button onPress={() => router.push("/selectSelectionMode?onboarding=true")} mode="contained" contentStyle={{ paddingHorizontal: 6, paddingVertical: 4 }} labelStyle={{ fontSize: 20, lineHeight: 36 }} >Next step</Button>
+                            <Button onPress={() => router.push("/onboarding/step2GrantPermissions")} mode="contained" contentStyle={{ paddingHorizontal: 6, paddingVertical: 4 }} labelStyle={{ fontSize: 20, lineHeight: 36 }} >Last step</Button>
                         </View>
                     </View>
                 ): (
