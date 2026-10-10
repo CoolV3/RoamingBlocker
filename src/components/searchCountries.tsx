@@ -30,7 +30,7 @@ export default function SearchCountries(onboarding: {onboarding: boolean}) {
     const filteredCountries = useMemo(() => {
 
         const query = search.trim().toLowerCase()
-        if (query.length == 0) return
+        if (query.length == 0) return countrylist
 
         return (countrylist ?? []).filter((country) => {
             return(
@@ -64,9 +64,8 @@ export default function SearchCountries(onboarding: {onboarding: boolean}) {
 
     return (
         <View>
-            <View className="p-2">
+            <View className="p-2 flex gap-4">
                 <Searchbar value={search} onChangeText={(e) => setSearch(e)} className="" placeholder="Search for a country"/>
-                {search.trim().length > 0 && (
                     <View>
                         {(filteredCountries?.length ?? 0 ) > 0 ? (
                             <FlatList data={filteredCountries ?? []} renderItem={({item}) => (
@@ -77,7 +76,6 @@ export default function SearchCountries(onboarding: {onboarding: boolean}) {
                             <Text>No countries found</Text>
                         )}
                     </View>
-                )}
             </View>
 
             <Portal>

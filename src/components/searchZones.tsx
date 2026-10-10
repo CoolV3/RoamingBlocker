@@ -30,7 +30,7 @@ export default function SearchZones(onboarding: {onboarding: boolean}) {
         const query = search.trim().toLowerCase()
 
         if (!query) {
-            return zoneList.slice(0, 5)
+            return zoneList
         }
 
         return (zoneList).filter((zone) => {
@@ -66,9 +66,8 @@ export default function SearchZones(onboarding: {onboarding: boolean}) {
 
     return (
         <View>
-            <View className="p-2">
+            <View className="p-2 flex gap-4">
                 <Searchbar value={search} onChangeText={(e) => setSearch(e)} className="" placeholder="Search for a zone"/>
-                {search.trim().length > 0 && (
                     <View>
                         {(filteredZones?.length ?? 0 ) > 0 ? (
                             <FlatList data={filteredZones ?? []} renderItem={({item}) => (
@@ -79,7 +78,7 @@ export default function SearchZones(onboarding: {onboarding: boolean}) {
                             <Text className="p-3">No Zones found</Text>
                         )}
                     </View>
-                )}
+
             </View>
 
             <Portal>
