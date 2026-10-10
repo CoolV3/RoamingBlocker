@@ -11,6 +11,7 @@ export default function OnboardingWelcomeScreen() {
     const [showVPNDenied, setShowVPNDenied] = useState(false)
     const [showNotiDenied, setShowNotiDenied] = useState(false)
     const [openNotiSettingsPage, setOpenNotiSettingsPage] = useState(false)
+    const [showBatterieDenied, setShowBatterieDenied] = useState(false)
     const [step, setStep] = useState(1)
     const [vpnAllowed, setVpnAllowed] = useState(false)
 
@@ -21,6 +22,10 @@ export default function OnboardingWelcomeScreen() {
                 await RoamingGuard.disableCountryWatching()
                 setVpnAllowed(true)
             } catch (e: any) {
+                if (e?.code == "ERR_BATTERY_OPTIMIZATION_DENIED") {
+                    setShowBatterieDenied(true)
+                    return
+                }
                 if (e?.code == "ERR_VPN_PERMISSION_DENIED") {
                     setShowVPNDenied(true)
                     return
@@ -73,6 +78,8 @@ export default function OnboardingWelcomeScreen() {
         )
     }
 
+
+
     return (
         <View className="flex items-center justify-between pt-20 h-full pb-5 p-2">
             <View>
@@ -117,7 +124,7 @@ export default function OnboardingWelcomeScreen() {
                 <Dialog visible={showNotiDenied} onDismiss={() => setShowNotiDenied(false)}>
                     <Dialog.Title>RoamingGuard needs Notifications Access</Dialog.Title>
                     <Dialog.Content>
-                        <Text>You need to allow RoamingGuard to allow RoamingGuard to send you notifications, otherwise RoamingGuard can`t warn you wenn your internet access is blocked</Text>
+                        <Text>You need to allow RoamingGuard to send you notifications, otherwise RoamingGuard can`t warn you wenn your internet access is blocked</Text>
                     </Dialog.Content>
                     <Dialog.Actions>
                         {openNotiSettingsPage ? (
@@ -128,6 +135,25 @@ export default function OnboardingWelcomeScreen() {
                         ) : (
                             <Button onPress={() => setShowNotiDenied(false)}>Got it!</Button>
                             )}
+                    </Dialog.Actions>
+                </Dialog>
+            </Portal>
+
+            <Portal>
+                <Dialog visible={showBatterieDenied} onDismiss={() => setShowBatterieDenied(false)}>
+                    <Dialog.Title>RoamingGuard needs Batterie optimisation disabled</Dialog.Title>
+                    <Dialog.Content>
+                        <Text>You need to disable Batterie optimisation, otherwise RoamingGuard can´t detect country changes reliable.</Text>
+                    </Dialog.Content>
+                    <Dialog.Actions>
+                        {openNotiSettingsPage ? (
+                            <Button onPress={() => {
+                                setShowNotiDenied(false)
+                                void openSettings()
+                            }}>Open Settings</Button>
+                        ) : (
+                            <Button onPress={() => setShowBatterieDenied(false)}>Got it!</Button>
+                        )}
                     </Dialog.Actions>
                 </Dialog>
             </Portal>

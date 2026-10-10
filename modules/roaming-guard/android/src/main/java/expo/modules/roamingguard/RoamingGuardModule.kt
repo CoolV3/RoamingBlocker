@@ -12,17 +12,25 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import android.content.Context
+import android.net.Uri
+import android.os.Build
+import android.os.PowerManager
+import android.provider.Settings
 
 class RoamingGuardModule : Module() {
 
     companion object {
         private const val VPN_PERMISSION_REQUEST_CODE = 7201
+        private const val BATTERY_OPTIMIZATION_REQUEST_CODE = 7202
+
 
         @Volatile
         var blockingStateListener: ((Boolean) -> Unit)? = null
     }
 
     private var pendingVpnPermissionPromise: Promise? = null
+    private var pendingBatteryOptimizationPromise: Promise? = null
 
     private val moduleScope =
         CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -56,6 +64,24 @@ class RoamingGuardModule : Module() {
         )
     }
 
+    private fun isIgnoringBatteryOptimizations(): Boolean {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return true
+        }
+
+        val context = requireNotNull(appContext.reactContext) {
+            "React context not available"
+        }
+
+        val powerManager = context.getSystemService(
+            Context.POWER_SERVICE
+        ) as PowerManager
+
+        return powerManager.isIgnoringBatteryOptimizations(
+            context.packageName
+        )
+    }
+
     override fun definition() = ModuleDefinition {
         Name("RoamingGuard")
         Events("onBlockingStateChanged")
@@ -74,40 +100,125 @@ class RoamingGuardModule : Module() {
         }
 
         OnActivityResult { _, payload ->
-            if (payload.requestCode != VPN_PERMISSION_REQUEST_CODE) {
-                return@OnActivityResult
-            }
+            when (payload.requestCode) {
+                BATTERY_OPTIMIZATION_REQUEST_CODE -> {
+                    val promise = pendingBatteryOptimizationPromise
+                        ?: return@OnActivityResult
 
-            val promise = pendingVpnPermissionPromise
-                ?: return@OnActivityResult
+                    pendingBatteryOptimizationPromise = null
 
-            pendingVpnPermissionPromise = null
+                    val context = requireNotNull(appContext.reactContext) {
+                        "React context not available"
+                    }
 
-            moduleScope.launch {
-                if (payload.resultCode != Activity.RESULT_OK) {
-                    countryStorage.setCountryWatchingEnabled(false)
+                    val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
 
-                    promise.reject(
-                        "ERR_VPN_PERMISSION_DENIED",
-                        "VPN permission was denied.",
-                        null
-                    )
 
-                    return@launch
+                    val ignoresBatteryOptimizations =
+                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                            true
+                        } else {
+                            powerManager.isIgnoringBatteryOptimizations(
+                                context.packageName
+                            )
+                        }
+
+                    if (!ignoresBatteryOptimizations) {
+                        promise.reject(
+                            "ERR_BATTERY_OPTIMIZATION_DENIED",
+                            "Battery optimization exemption was denied.",
+                            null
+                        )
+
+                        return@OnActivityResult
+                    }
+
+
+                    val prepareIntent = VpnService.prepare(context.applicationContext)
+
+                    if (prepareIntent == null) {
+                        moduleScope.launch {
+                            try {
+                                countryStorage.setCountryWatchingEnabled(true)
+                                startRoamingGuardService()
+                                promise.resolve(null)
+                            } catch (exception: Exception) {
+                                countryStorage.setCountryWatchingEnabled(false)
+
+                                promise.reject(
+                                    "ERR_ROAMING_GUARD_START",
+                                    "Failed to start RoamingGuard.",
+                                    exception
+                                )
+                            }
+                        }
+
+                        return@OnActivityResult
+                    }
+
+                    val activity = appContext.currentActivity
+
+                    if (activity == null) {
+                        promise.reject(
+                            "ERR_ACTIVITY_UNAVAILABLE",
+                            "RoamingGuard needs an open activity to request VPN permission.",
+                            null
+                        )
+
+                        return@OnActivityResult
+                    }
+
+                    pendingVpnPermissionPromise = promise
+
+                    try {
+                        activity.startActivityForResult(
+                            prepareIntent,
+                            VPN_PERMISSION_REQUEST_CODE
+                        )
+                    } catch (exception: Exception) {
+                        pendingVpnPermissionPromise = null
+
+                        promise.reject(
+                            "ERR_VPN_PERMISSION_REQUEST",
+                            "Failed to open the Android VPN permission dialog.",
+                            exception
+                        )
+                    }
                 }
 
-                try {
-                    countryStorage.setCountryWatchingEnabled(true)
-                    startRoamingGuardService()
-                    promise.resolve(null)
-                } catch (exception: Exception) {
-                    countryStorage.setCountryWatchingEnabled(false)
+                VPN_PERMISSION_REQUEST_CODE -> {
+                    val promise = pendingVpnPermissionPromise
+                        ?: return@OnActivityResult
 
-                    promise.reject(
-                        "ERR_ROAMING_GUARD_START",
-                        "VPN permission was granted, but RoamingGuard could not be started.",
-                        exception
-                    )
+                    pendingVpnPermissionPromise = null
+
+                    moduleScope.launch {
+                        if (payload.resultCode != Activity.RESULT_OK) {
+                            countryStorage.setCountryWatchingEnabled(false)
+
+                            promise.reject(
+                                "ERR_VPN_PERMISSION_DENIED",
+                                "VPN permission was denied.",
+                                null
+                            )
+
+                            return@launch
+                        }
+
+                        try {
+                            countryStorage.setCountryWatchingEnabled(true)
+                            startRoamingGuardService()
+                            promise.resolve(null)
+                        } catch (exception: Exception) {
+                            countryStorage.setCountryWatchingEnabled(false)
+
+                            promise.reject(
+                                "ERR_ROAMING_GUARD_START",
+                                "VPN permission was granted, but RoamingGuard could not be started.",
+                                exception
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -158,18 +269,71 @@ class RoamingGuardModule : Module() {
             }
 
         AsyncFunction("enableCountryWatching") { promise: Promise ->
-            if (pendingVpnPermissionPromise != null) {
+            if (
+                pendingVpnPermissionPromise != null ||
+                pendingBatteryOptimizationPromise != null
+            ) {
                 promise.reject(
-                    "ERR_VPN_REQUEST_IN_PROGRESS",
-                    "A VPN permission request is already in progress.",
+                    "ERR_PERMISSION_REQUEST_IN_PROGRESS",
+                    "A permission request is already in progress.",
                     null
                 )
 
                 return@AsyncFunction
             }
 
-            val context = requireNotNull(appContext.reactContext) {
-                "React context not available"
+            val context = requireNotNull(appContext.reactContext) {"React context not available"}
+
+            val activity = appContext.currentActivity
+
+            if (activity == null) {
+                promise.reject(
+                    "ERR_ACTIVITY_UNAVAILABLE",
+                    "RoamingGuard needs an open activity to request permissions.",
+                    null
+                )
+
+                return@AsyncFunction
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                val powerManager = context.getSystemService(
+                    Context.POWER_SERVICE
+                ) as PowerManager
+
+                val ignoresBatteryOptimizations =
+                    powerManager.isIgnoringBatteryOptimizations(
+                        context.packageName
+                    )
+
+                if (!ignoresBatteryOptimizations) {
+                    val batteryOptimizationIntent = Intent(
+                        Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+                    ).apply {
+                        data = Uri.parse(
+                            "package:${context.packageName}"
+                        )
+                    }
+
+                    pendingBatteryOptimizationPromise = promise
+
+                    try {
+                        activity.startActivityForResult(
+                            batteryOptimizationIntent,
+                            BATTERY_OPTIMIZATION_REQUEST_CODE
+                        )
+                    } catch (exception: Exception) {
+                        pendingBatteryOptimizationPromise = null
+
+                        promise.reject(
+                            "ERR_BATTERY_OPTIMIZATION_REQUEST",
+                            "Failed to open the Android battery optimization dialog.",
+                            exception
+                        )
+                    }
+
+                    return@AsyncFunction
+                }
             }
 
             val prepareIntent = VpnService.prepare(
@@ -192,18 +356,6 @@ class RoamingGuardModule : Module() {
                         )
                     }
                 }
-
-                return@AsyncFunction
-            }
-
-            val activity = appContext.currentActivity
-
-            if (activity == null) {
-                promise.reject(
-                    "ERR_ACTIVITY_UNAVAILABLE",
-                    "RoamingGuard needs an open activity to request VPN permission.",
-                    null
-                )
 
                 return@AsyncFunction
             }
