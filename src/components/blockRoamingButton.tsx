@@ -124,12 +124,12 @@ export default function BlockRoamingButton({title, onPress}: {title: string, onP
     useFocusEffect(
         useCallback(() => {
             const loadShape = async () => {
-                const storedShape = await AsyncStorage.getItem(
-                    shapeKey
-                )
+                const storedShape = await AsyncStorage.getItem(shapeKey)
 
                 if (storedShape !== null) {
                     setCurrentShape(storedShape)
+                } else {
+                    setCurrentShape("polygon4")
                 }
             }
 

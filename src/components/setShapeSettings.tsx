@@ -36,11 +36,14 @@ export default function SetShapeSettings() {
 
                 if (storedShape !== null) {
                     setCurrentShape(storedShape)
+                } else {
+                    setCurrentShape("polygon4")
+                    await setShape("polygon4")
                 }
             }
 
-            loadShape()
-        }, [])
+            void loadShape()
+        }, [setShape])
     )
 
     return (
