@@ -30,7 +30,7 @@ export default function SearchCountries(onboarding: {onboarding: boolean}) {
     const filteredCountries = useMemo(() => {
 
         const query = search.trim().toLowerCase()
-        if (query.length == 0) return countrylist
+        if (query.length == 0) return countrylist.slice(0, 5)
 
         return (countrylist ?? []).filter((country) => {
             return(
