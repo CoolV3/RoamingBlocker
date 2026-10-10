@@ -1,56 +1,68 @@
-# Welcome to your Expo app 👋
+# RoamingGuard
+An app that blocks your internet traffic if you are in a disallowed contry so you don´t acceddently pay for roaming fees.
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## Features
+- Fully functional Internet Blocking
+- Custom Rules
+- Onboarding
+- Customization
+- Light/Dark Mode
+- Enable/Disable haptic feedback and affiliate links
 
-## Get started
+## How it works
+It uses a fully functional native module, that starts a vpn connection when a disallowed country is detected, which blocks your internet connection.
+The vpn is fully local. In the rules tab you can add new countries or zones to the allowed list. Everything else will be blocked.
+In settings you can customize the app, set a theme and disable or enable haptic or affiliate links. 
 
-1. Install dependencies
+## How to build it yourself
+
+1. Clone the repo with
 
    ```bash
-   npm install
+   git clone https://github.com/CoolV3/RoamingBlocker
    ```
 
-2. Start the app
+2. Install dependencies
 
    ```bash
-   npx expo start
+   pnpm install
    ```
 
-In the output, you'll find options to open the app in a
+3. Start the app
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+   ```bash
+   pnpm expo run:android
+   ```
+**Note:** The app does not run in expo go!
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
-## Get a fresh project
+## Tech Stack
+- React Native with Expo Framework
+- Uniwind for styling
+- React native paper for Material UI Components
+- Expo UI for some components that require native styling.
+- Lucide React Native for the icons
 
-When you're ready, run:
+## Why I built it
+Because we went on a trip to monaco, and we forgot to turn mobile data off, and I wanted this to never happen again.
 
-```bash
-npm run reset-project
-```
+## Screenshots of the app
+<p align="center">
+   <img width="30%" alt="Homepage" src="screenshots/Homepage.jpg"/>
+   <img width="30%" alt="Homepage" src="screenshots/HomepageActive.jpg"/>
+   <img width="30%" alt="Homepage" src="screenshots/Rules.jpg"/>
+</p>
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+<p align="center">
+   <img width="30%" alt="Homepage" src="screenshots/ChooseSelectionMode.jpg"/>
+   <img width="30%" alt="Homepage" src="screenshots/AddCounties.jpg"/>
+   <img width="30%" alt="Homepage" src="screenshots/AddCountryAlert.jpg"/>
+</p>
 
-### Other setup steps
+<p align="center">
+   <img width="30%" alt="Homepage" src="screenshots/SettingsDark.jpg"/>
+   <img width="30%" alt="Homepage" src="screenshots/SettingsLight.jpg"/>
+   <img width="30%" alt="Homepage" src="screenshots/OnboardingHowItWorksDark.jpg"/>
+</p>
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
 
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.

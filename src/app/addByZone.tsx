@@ -4,7 +4,7 @@ import {Appbar} from "react-native-paper";
 import {useLocalSearchParams, useRouter} from "expo-router";
 import SearchZones from "@/components/searchZones";
 
-export default function AddByCountrie() {
+export default function AddByCountry() {
     const router = useRouter()
     const {onboarding} = useLocalSearchParams<{onboarding?: string}>()
     const isOnboardingActive = onboarding == "true"

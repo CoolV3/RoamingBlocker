@@ -51,7 +51,7 @@ export default function SearchZones(onboarding: {onboarding: boolean}) {
 
         setShowDialog(false);
         setCurrentZone(null);
-        if (onboarding) {
+        if (onboarding.onboarding) {
             router.push("/onboarding/step1AddCountries?added=true")
             return
         }

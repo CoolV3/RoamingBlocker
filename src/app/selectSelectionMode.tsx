@@ -24,8 +24,8 @@ export default function AddNewCountriesPage() {
                     </Card.Content>
 
                     <Card.Actions>
-                        <Button onPress={() => router.push(isOnboardingActive ? "/addByCountry" : "/addByCountry?onboarding=true")}>Add countries</Button>
-                        <Button onPress={() => router.push(isOnboardingActive ? "/addByZone" : "/addByZone?onboarding=true")}>Add zones</Button>
+                        <Button onPress={() => router.push(isOnboardingActive ? "/addByCountry?onboarding=true" : "/addByCountry")}>Add countries</Button>
+                        <Button onPress={() => router.push(isOnboardingActive ? "/addByZone?onboarding=true" : "/addByZone")}>Add zones</Button>
                     </Card.Actions>
                 </Card>
             </View>

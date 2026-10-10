@@ -54,7 +54,7 @@ export default function SearchCountries(onboarding: {onboarding: boolean}) {
             return
         }
         void addCountry(currentCountry?.countryCode)
-        if (onboarding) {
+        if (onboarding.onboarding) {
             router.push("/onboarding/step1AddCountries?added=true")
             return
         }
